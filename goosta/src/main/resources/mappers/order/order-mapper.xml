@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="orderandpay">
+   
+      
+   <insert id="insertoap" parameterType="order">
+   	insert into orderlist values((select max(orderlistid) from orderlist)+1, #{memberid}, #{productid}, 3, #{orderlistname}, sysdate, #{orderlistquantity}, (select max(orderlistnumber) from orderlist)+1, #{orderlistzipcode1},#{orderlistzipcode2}, #{orderlistaddress1}, #{orderlistaddress2}, #{orderlistphone1}, #{orderlistphone2}, #{orderlisttotalprice}, 'N', #{orderemail} ,#{ordermessage})
+   </insert>
+   
+   <select id="selectorder" parameterType="order" resultType="order">
+   	select * from orderlist where memberid = #{memberid} and orderlistid = (select max(orderlistid) from orderlist)
+   </select>
+   
+   <update id="updatemembermile" parameterType="int">
+   	update member set membertotalmileage =  (select membertotalmileage from member where memberid = #{memberid}) + #{mileage} where memberid = #{memberid}
+   </update>
+   
+   <!--  <insert id="insertmember" parameterType="member">
+   		insert into member values(#{memberid}, #{memberpwd}, #{membername}, #{memberbirth1}, #{memberbirth2}, #{memberbirth3}, #{memberemail}, #{memberphone1}, #{memberphone2}, #{memberphone3}, #{memberaddress1}, #{memberaddress2}, #{memberaddress3}, #{memberaddress4}, 'NORMAL', 0, 0, #{membergender}, sysdate, #{membersize}, 0, 'y')
+   		
+   </insert> 
+   
+   <select id="idcheck" resultType="int" parameterType="String">
+   	select count(*) from member where memberid = #{memberid}
+   </select>
+   
+   <select id="login" resultType="member" parameterType="member">
+   		select * from member where memberid = #{memberid} and memberpwd = #{memberpwd}
+   </select>
+   
+   <select id="findid" resultType="int" parameterType="member">
+   		select count(*) from member where membername= #{membername} and memberemail = #{memberemail}
+   </select>
+   
+   <select id="emailcheck" resultType="int" parameterType="String">
+   		select count(*) from member where memberemail = #{email}
+   </select> -->
+   
+   <select id="selectm" parameterType="String" resultType="member">
+   		select * from member where memberid = #{memberid}
+   </select>
+   
+   <select id = "selectCountfirst" resultType="int" parameterType="String">
+   		select count(*) from orderlist where memberid = #{memberid} and (orderstatusnumber = 1 or orderstatusnumber = 2) and orderlistid >0
+   </select>
+   <select id = "selectCountsecond" resultType="int" parameterType="String">
+   		select count(*) from orderlist where memberid = #{memberid} and (orderstatusnumber = 3 or orderstatusnumber = 4 or orderstatusnumber = 5) and orderlistid >0
+   </select>
+   <select id = "selectCountthird" resultType="int" parameterType="String">
+   		select count(*) from orderlist where memberid = #{memberid} and (orderstatusnumber = 8) and orderlistid >0
+   </select>
+   <select id="selectOrderlist" parameterType="String" resultType="order">
+		  select orderlistid, memberid, productid, productname, productsize,orderstatusstatus,
+					productimagemain, orderstatusnumber, orderlistdate, orderlistquantity,
+					orderlistnumber, orderlistzipcode1, orderlistzipcode2, orderlistaddress1,
+					orderlistaddress2, orderlistphone1, orderlistphone2, orderlisttotalprice,
+					orderguest, orderemail, ordermessage
+			from orderlist
+			join product USING(productid)
+			JOIN pimage USING (productimageid)
+			join orderstatus using(orderstatusnumber)
+			where memberid = #{memberid} and orderlistid > 0
+   </select>
+   
+   <select id = "selectCount1" resultType="int" parameterType="String">
+   		select count(*) from orderlist where memberid = #{memberid} and (orderstatusnumber = 1) and orderlistid >0
+   </select>
+     <select id = "selectCount2" resultType="int" parameterType="String">
+   		select count(*) from orderlist where memberid = #{memberid} and (orderstatusnumber = 2) and orderlistid >0
+   </select>
+     <select id = "selectCount3" resultType="int" parameterType="String">
+   		select count(*) from orderlist where memberid = #{memberid} and (orderstatusnumber = 3 or orderstatusnumber = 4) and orderlistid >0
+   </select>
+     <select id = "selectCount4" resultType="int" parameterType="String">
+   		select count(*) from orderlist where memberid = #{memberid} and (orderstatusnumber = 5) and orderlistid >0
+   </select>
+     <select id = "selectCount5" resultType="int" parameterType="String">
+   		select count(*) from orderlist where memberid = #{memberid} and (orderstatusnumber = 8) and orderlistid >0
+   </select>
+   <select id="selectSearchList" parameterType="HashMap" resultType="order">
+   		 select orderlistid, memberid, productid, productname, productsize,orderstatusstatus,
+					productimagemain, orderstatusnumber, orderlistdate, orderlistquantity,
+					orderlistnumber, orderlistzipcode1, orderlistzipcode2, orderlistaddress1,
+					orderlistaddress2, orderlistphone1, orderlistphone2, orderlisttotalprice,
+					orderguest, orderemail, ordermessage
+			from orderlist
+			join product USING(productid)
+			JOIN pimage USING (productimageid)
+			join orderstatus using(orderstatusnumber)
+			where memberid = #{memberid} and orderlistid > 0 
+			
+			<if test="orderstatusnumber == 3 ">
+		      			and  (orderstatusnumber = 3 or orderstatusnumber = 4)		      			
+		     </if>
+			
+			<if test="orderstatusnumber != 3">
+		      			and  orderstatusnumber = #{orderstatusnumber}
+		     </if>		
+   </select>
+  
+</mapper>

@@ -1,0 +1,162 @@
+@CHARSET "UTF-8";
+/*--------------------------------------------------------- */
+/* qnaWrite CSS */
+/*--------------------------------------------------------- */
+	html, body {
+	padding : 0px;	
+	margin : 0px;
+}
+.container-fluid {
+	width: 1200px;
+	height: 850px;
+	margin: auto;
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+
+#row-fluid {
+	width: 100%;
+}
+
+#menu {
+	width: 100%;
+	height: 200px;
+	border: 1px solid lightgray;
+	margin-bottom: 50px;
+	z-index: 0;
+	background: lightgray;
+	position: relative;
+	background-image: url("../../images/ysw/title.png");
+	background-size: 100% 120%;
+	border-radius: 0px 15px 0px 15px;
+}
+
+#menu_ul {
+	position: relative;
+	z-index: 1;
+	width: 59%;
+	height: 46px;
+	margin: auto;
+	margin-top: 174px;
+	border: 1px solid lightgray;
+	display: block;
+	background-color: white;
+	padding : 0;
+}
+
+#menu_ul li {
+	   float: left;
+    list-style: none;
+    text-align: center;
+    display: block;
+    width: 229px;
+    line-height: 50px;
+    font-weight: bold;
+    font-size: 10pt;
+    height: 47px;
+    color: gray;
+    cursor: pointer;
+}
+
+#center_li {
+	border-left: 1px solid #f6f6f6;
+	border-right: 1px solid #f6f6f6;
+}
+
+#menu_ul li a {
+	display: inline-block;
+	width: 100%;
+	text-decoration: none;
+	color: gray;
+	font-weight: bold;
+	cursor: pointer;
+	height: 43px;
+}
+
+#title {
+	width: 59px;
+	margin: auto;
+	margin-bottom: 30px;
+	color: gray;
+	font-size: 11pt;
+	font-weight: bold;
+}
+
+#qnatable {
+	width: 70%;
+	margin: auto;
+	border-bottom: 1px solid lightgray;
+}
+
+#qnatable td {
+	border-top: 1px solid lightgray;
+	height: 50px;
+}
+
+.td1 {
+	background: #f6f6f6;
+	width: 200px;
+	color: black; text-align : center;
+	font-size : 10pt;
+	text-align: center
+}
+.td2 input {
+	margin: 0;
+	margin-left: 10px;
+	border-radius: 0px;
+	height: 23px;
+}
+
+#email_select {
+	width: 120px;
+}
+
+#title_input {
+	width: 400px;
+}
+
+#writer {
+	width: 100px;
+}
+
+.td2 select {
+	margin-left: 10px;
+	width: 80px;
+}
+
+.td2 textarea {
+	margin-left: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px; resize : none;
+	width: 700px;
+	height: 300px;
+	resize: none
+}
+
+#submit_div {
+	margin: auto;
+	margin-top: 10px;
+	width: 85%;
+	text-align: center;
+}
+
+#submit {
+	width: 75px;
+	height: 33px;
+	background: #027dbf;
+	color: white;
+}
+
+#cancle {
+	width: 75px;
+	height: 33px;
+	background: #027dbf;
+	color: white;
+	margin-right: 10px;
+}
+
+#must_label {
+	margin-top : 10px;
+	margin-left: 172px;
+	font-size : 10pt;
+}

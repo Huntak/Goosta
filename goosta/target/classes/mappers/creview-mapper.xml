@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="creviewVO">
+  <insert id="insertFile" parameterType="report">
+   		insert into BOARDIMAGE (BOARDIMAGEID,BOARDIMAGE1)
+		values (nvl((select max(BOARDIMAGEID)+1 from BOARDIMAGE),1)
+        		,#{boardimage1})
+   </insert>
+  
+   <insert id="insertCreview" parameterType="creviewVO"> 
+   	   <if test="boardimage1 =='' " > 
+		INSERT 
+		INTO BOARD VALUES
+		   		((select max(boardno) from board)+1, #{boardtypeno}, #{boardtitle}, #{boardcontent},
+		   		 #{boardwriter},SYSDATE, 0,null,null,null,null,#{boardprefix},0)
+   		</if>
+       <if test="boardimage1 !='' " > 
+		INSERT ALL
+	     INTO BOARD VALUES
+		   		((select max(boardno) from board)+1, #{boardtypeno}, #{boardtitle}, #{boardcontent},
+		   		 #{boardwriter},SYSDATE, 0,null,null,null,null,#{boardprefix},nvl((select max(BOARDIMAGEID)+1 from BOARDIMAGE),1))
+		 INTO BOARDIMAGE (BOARDIMAGEID,BOARDIMAGE1) VALUES (nvl((select max(BOARDIMAGEID)+1 from BOARDIMAGE),1)
+		        		,#{boardimage1})
+		SELECT * FROM DUAL
+		</if>
+   </insert>
+   <select id="showCreviews" parameterType="hashmap" resultType="hashmap">
+   	<![CDATA[
+			SELECT *
+			FROM board
+			where boardno != 1 and
+			boardtypeno = 7
+			ORDER BY boardno DESC
+			]]>
+   </select>
+	
+	<select id="creviewDetail" parameterType="int" resultType="creviewVO">
+	 <![CDATA[
+	 		SELECT * 
+	 		FROM BOARD 
+	 		JOIN BOARDIMAGE USING (BOARDIMAGEID)
+	 		WHERE BOARDNO != 1 AND
+	 		BOARDTYPENO = 7 AND BOARDNO = #{boardno}
+	 ]]>
+	</select>
+	
+	<select id="creviewListView"  resultType="hashmap">
+	 <![CDATA[
+			SELECT *
+			FROM board
+      		JOIN BOARDIMAGE USING (BOARDIMAGEID)
+			where boardno != 1 and
+			boardtypeno = 7
+			ORDER BY boardno DESC
+			 ]]>
+	</select>
+	<delete id="creviewDelete" parameterType="int">
+		<![CDATA[
+	 		DELETE  FROM BOARD WHERE BOARDTYPENO = 7 AND BOARDNO = #{boardno}
+		 ]]>
+	</delete>
+	
+	<update id="creviewModify" parameterType="creviewVO">
+		update board set boardtitle = #{boardtitle},  boarddate = SYSDATE, boardcontent = #{boardcontent}		
+		where boardno = #{boardno} and boardtypeno = 7
+	</update>
+	<update id="fileModify" parameterType="creviewVO">
+		update boardimage set boardimage1 = #{boardimage1}		
+		where boardimageid = #{boardimageid} 
+	</update>
+	
+	<select id="creviewSearch" parameterType="string" resultType="hashmap">
+	 <![CDATA[
+			SELECT *
+			FROM board
+			JOIN BOARDIMAGE USING (BOARDIMAGEID)
+			where boardno != 1 and boardtypeno = 7
+			and (boardtitle LIKE '%'||#{searchtext}||'%' or boardcontent LIKE '%'||#{searchtext}||'%' 
+			or boardwriter LIKE '%'||#{searchtext}||'%')
+			ORDER BY boardno DESC	
+			 ]]>
+	</select>
+	<!-- 댓글 목록 -->
+    <select id="creiviewreplyList" parameterType="int" resultType="reportReply">
+   		SELECT * 
+   		FROM REPLY
+   		WHERE BOARDNO = #{boardno}
+   		order by REPLYDATE 
+   </select>
+   <!-- 댓글 수정시 댓글목록 가져오기 -->
+   <select id = "getReplyContent" parameterType="hashmap" resultType="reportReply">
+   		SELECT * 
+   		FROM REPLY
+   		WHERE BOARDNO = #{boardno} and REPLYNO = #{replyno}
+   		order by REPLYDATE 
+   </select>
+   <!-- 댓글 등록 -->
+   <insert id="creiviewreplyInsert" parameterType="hashmap">   
+   		INSERT INTO REPLY (REPLYNO,REPLYCONTENT,REPLYWRITER,BOARDNO,REPLYDATE)
+   		VALUES((SELECT NVL(MAX(REPLYNO)+1,1)FROM REPLY)
+   				,#{replycontent}
+   				,#{replywriter}
+   				,#{boardno}
+   				,sysdate
+   		)
+   </insert>
+	
+</mapper>

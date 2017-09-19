@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shandreply">
+
+<!--댓글 등록  -->
+<insert id="insertShandReply" parameterType="HashMap">
+INSERT INTO REPLY VALUES(
+(SELECT DISTINCT NVL((SELECT MAX(REPLYNO)+1 FROM REPLY), 1) FROM REPLY),
+#{replycontent},
+#{replywriter},
+SYSDATE,
+#{boardno},
+1,
+1,
+1,
+'N'
+)
+</insert>
+
+<!--댓글 등록후 해당 글에 달린 댓글 전체 조회  -->
+<select id="selectAllShandReply" parameterType="HashMap" resultType="reply">
+SELECT * FROM REPLY 
+WHERE BOARDNO = #{boardno} AND REPLYRELEV = 1
+ORDER BY REPLYNO DESC
+</select>
+
+<!--중고거래 게시글 상세보기 댓글 전체조회 -->
+<select id="selectAllShandReply2" parameterType="int" resultType="reply">
+SELECT * FROM REPLY 
+WHERE BOARDNO = #{boardno} AND REPLYRELEV = 1
+ORDER BY REPLYNO DESC
+</select>
+
+<!--댓글 의 댓글 등록  -->
+<insert id="insertShandReReply" parameterType="HashMap">
+INSERT INTO REPLY VALUES(
+(SELECT DISTINCT NVL((SELECT MAX(REPLYNO)+1 FROM REPLY), 1) FROM REPLY),
+#{replycontent},
+#{replywriter},
+SYSDATE,
+#{boardno},
+#{replyreref},
+2,
+1,
+'N'
+)
+</insert>
+
+<select id="selectShandReplyComment" parameterType="int" resultType="reply">
+SELECT * FROM REPLY
+WHERE REPLYREREF = #{replyno} AND REPLYRELEV = 2
+ORDER BY REPLYNO DESC
+</select>
+</mapper>

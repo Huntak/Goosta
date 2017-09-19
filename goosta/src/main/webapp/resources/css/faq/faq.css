@@ -1,0 +1,240 @@
+@CHARSET "UTF-8";
+/*--------------------------------------------------------- */
+/* FAQ CSS */
+/*--------------------------------------------------------- */
+.container-fluid {
+	width: 1200px;
+	height: 850px;
+	margin: auto;
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+
+#row-fluid {
+	width: 100%;
+}
+
+#menu {
+	width: 100%;
+	height: 200px;
+	border: 1px solid lightgray;
+	margin-bottom: 50px;
+	z-index: 0;
+	background: lightgray;
+	position: relative;
+	background-image: url("../../images/ysw/title.png");
+	background-size: 100% 120%;
+	border-radius: 0px 15px 0px 15px;
+}
+
+#menu_ul {
+	position: relative;
+	z-index: 1;
+	width: 59%;
+	height: 46px;
+	margin: auto;
+	margin-top: 174px;
+	border: 1px solid lightgray;
+	display: block;
+	background-color: white;
+}
+
+#menu_ul li {
+	float: left;
+    list-style: none;
+    text-align: center;
+    display: block;
+    width: 227px;
+    line-height: 50px;
+    font-weight: bold;
+    font-size: 10pt;
+    height: 47px;
+    color: gray;
+    cursor: pointer;
+}
+
+#center_li {
+	border-left: 1px solid #f6f6f6;
+	border-right: 1px solid #f6f6f6;
+}
+
+#table_div {
+	height: 550px;
+}
+
+#faq_table {
+	width: 80%;
+	margin: auto;
+	border-top: 1px solid lightgray; 
+	text-align : center;
+	font-size: 14px;
+	text-align: center;
+}
+
+#faq_table td {
+	border-bottom: 1px solid lightgray;
+	height: 35px;
+	color: gray;
+}
+
+#faq_table_tr {
+	height: 30px;
+}
+
+#faq_table_menutr {
+	font-weight: bold;
+	background: #f6f6f6;
+}
+
+#search_div {
+	margin: auto;
+	width: 30%;
+	margin-top: 30px;
+	display: block;
+}
+#search_div form{
+	margin-left : 40px;
+}
+
+#search_input {
+	padding: 0;
+	height: 25px;
+	margin: 0;
+	width: 206px;
+	border-radius: 0px;
+}
+
+#search_button {
+	padding: 0;
+	height: 25px;
+	margin: 0;
+	width: 50px;
+	background: white;
+	color: gray;
+}
+
+#submenu_table {
+	margin: auto;
+	width: 80%;
+	margin-bottom: 30px;
+}
+
+#submenu_table tr th {
+	width: 130px;
+	border: 1px solid lightgray;
+	height: 40px;
+	text-align: center;
+}
+
+#menu_ul li a {
+	display: inline-block;
+	width: 100%;
+	text-decoration: none;
+	color: gray;
+	font-weight: bold;
+	cursor: pointer;
+	height: 43px;
+}
+
+a:hover {
+	text-decoration: none;
+	color: darkgray;
+}
+
+#paging {
+	margin: auto;
+	margin-top: 20px;
+	color: gray;
+	font-size: 14px;
+	width: 105px;
+}
+
+#paging a {
+	font-size: 14px;
+}
+
+#title {
+	width: 29px;
+	margin: auto;
+	margin-bottom: 30;
+	color: gray;
+	font-size: 11pt;
+	font-weight: bold;
+}
+
+#submenu_tr th {
+	color: gray;
+	cursor: pointer;
+}
+
+#submenu_tr a {
+	font-size: 14px;
+	font-weight: bold; line-height : 39px;
+	height: 37px;
+	width: 100%;
+	display: inline-block;
+	line-height: 39px;
+}
+
+#menu:hover {
+	cursor: pointer;
+}
+
+#pagingTable {
+	width: 600px;
+	margin: auto;
+	"
+}
+#pagingTable tr td a{
+	font-size : 14px;
+	font-weight : bold;
+}
+#pagingTable tr td a:hover {
+	text-decoration: none;
+}
+
+#pagingDiv {
+	margin-top: 30px;
+}
+#write_div{
+	position : relative;
+	width : 90%;
+}
+#writeBtn{
+	position : absolute;
+	right : 0;
+	display: inline-block;
+    border: 1px solid lightgray;
+    width: 65px;
+    height: 27px;
+    line-height: 28px;
+    text-align: center;
+    font-size: 13px;
+}
+#btn_div{
+	  position: relative;
+    width: 85%;
+    margin-top: 10px;
+}
+#toListBtn1{
+    display: inline-block;
+    border: 1px solid lightgray;
+    height: 30px;
+    width: 50px;
+    text-align: center;
+    line-height: 30px;
+    cursor : pointer;
+    position : absolute;
+    right : 0;
+}
+#toListBtn2{
+    display: inline-block;
+    border: 1px solid lightgray;
+    height: 30px;
+    width: 50px;
+	    text-align: center;
+	    line-height: 30px;
+    cursor : pointer;
+    position : absolute;
+    right : 60px;
+}

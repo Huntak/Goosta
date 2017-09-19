@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="search">
+   <select id="previousProductList" parameterType="hashmap" resultType="product">
+   		SELECT DISTINCT PRODUCTNAME, PRODUCTIMAGEMAIN
+  		FROM PRODUCT
+ 		 JOIN PIMAGE USING (PRODUCTIMAGEID)
+ 		 WHERE PRODUCTNAME in
+ 	<foreach collection="list" item="item" index="index" open="(" separator="," close=")"> 
+        	#{item}  
+ 	</foreach>
+ 	ORDER BY
+ 	<foreach collection="list" item="item" index="index" separator="," > 
+        	#{item}  
+ 	</foreach>  
+   		 ASC
+   </select>
+      
+   <select id="headerSearchView" parameterType="string" resultType="product">
+      <![CDATA[
+        SELECT DISTINCT PRODUCTNAME,PRODUCTIMAGEMAIN,PRODUCTPRICE,CATEGORYBRAND
+         FROM
+          (SELECT  P.PRODUCTNAME,P.PRODUCTSIZE,P.CATEGORYID,P.PROVIDERCODE,P.PRODUCTPRICE,P.PRODUCTQUANTITY
+            ,P.PRODUCTRECOMMEND,P.PRODUCTDATE,M.PRODUCTIMAGEMAIN
+           FROM PRODUCT P 
+           LEFT JOIN PIMAGE M USING (PRODUCTIMAGEID)
+         WHERE
+            ROWNUM < 6 AND
+            PRODUCTNAME LIKE '%'||#{searchtext}||'%' or PRODUCTSIZE LIKE '%'||#{searchtext}||'%'
+            or categoryid in 
+      (select categoryid from categories right join product using (categoryid)
+      where categorybrand LIKE '%'||#{searchtext}||'%' or categorysort LIKE '%'||#{searchtext}||'%'))
+          LEFT JOIN CATEGORIES USING (CATEGORYID)		
+      
+      ]]>
+   </select>
+   <select id="textSearchView" parameterType="string" resultType="product">
+   	 <![CDATA[
+        SELECT DISTINCT PRODUCTNAME,PRODUCTIMAGEMAIN,PRODUCTPRICE,CATEGORYBRAND
+         FROM
+          (SELECT  P.PRODUCTNAME,P.PRODUCTSIZE,P.CATEGORYID,P.PROVIDERCODE,P.PRODUCTPRICE,P.PRODUCTQUANTITY
+            ,P.PRODUCTRECOMMEND,P.PRODUCTDATE,M.PRODUCTIMAGEMAIN
+           FROM PRODUCT P
+           LEFT JOIN PIMAGE M USING (PRODUCTIMAGEID)
+         WHERE
+            PRODUCTNAME LIKE '%'||#{searchtext}||'%' or PRODUCTSIZE LIKE '%'||#{searchtext}||'%'
+            or categoryid in 
+      (select categoryid from categories right join product using (categoryid)
+      where categorybrand LIKE '%'||#{searchtext}||'%' or categorysort LIKE '%'||#{searchtext}||'%'))
+                LEFT JOIN CATEGORIES USING (CATEGORYID)		
+            ]]>
+   </select>
+   
+   <select id="sortByLowPrice" parameterType="string" resultType="product">
+    <if test="searchtext !=''" > 
+   	 <![CDATA[
+		  SELECT DISTINCT  PRODUCTNAME,CATEGORYID,PRODUCTIMAGEID,PRODUCTPRICE,PRODUCTIMAGEMAIN,CATEGORYBRAND,CATEGORYSORT, COUNT 
+                      FROM 
+                           ( 
+                            SELECT P.PRODUCTID,P.PRODUCTNAME,P.CATEGORYID,
+                            P.PRODUCTIMAGEID,P.PRODUCTPRICE,M.PRODUCTIMAGEMAIN,C.CATEGORYBRAND,C.CATEGORYSORT  
+                            FROM PRODUCT P, CATEGORIES C, PIMAGE M
+                            WHERE P.CATEGORYID = C.CATEGORYID
+                            AND P.PRODUCTIMAGEID = M.PRODUCTIMAGEID 
+                            AND P.PRODUCTNAME LIKE '%'||#{searchtext}||'%')
+                      LEFT JOIN  ( SELECT PRODUCTID, COUNT(*) COUNT  FROM ORDERLIST  group BY PRODUCTID)
+                      USING (PRODUCTID)
+                      ORDER BY PRODUCTPRICE ASC
+            ]]>
+    </if> 
+   	<if test="searchtext =='' " > 
+		  SELECT DISTINCT  PRODUCTNAME,CATEGORYID,PRODUCTIMAGEID,PRODUCTPRICE,PRODUCTIMAGEMAIN,CATEGORYBRAND,CATEGORYSORT, COUNT 
+                      FROM 
+                           ( 
+                            SELECT P.PRODUCTID,P.PRODUCTNAME,P.CATEGORYID,
+                            P.PRODUCTIMAGEID,P.PRODUCTPRICE,M.PRODUCTIMAGEMAIN,C.CATEGORYBRAND,C.CATEGORYSORT  
+                            FROM PRODUCT P, CATEGORIES C, PIMAGE M
+                            WHERE P.PRODUCTIMAGEID = M.PRODUCTIMAGEID AND                      
+      <if test = "(category != ''  or brand != '')">
+                             P.CATEGORYID IN 
+                            (select C.categoryid from categories right join product using (categoryid)
+                        <if test = "category != ''  and brand == '' " >    
+                             WHERE REGEXP_LIKE(C.categorysort, #{category}))
+                         </if>
+                         <if test = "category == '' and brand != '' " >    
+                             WHERE REGEXP_LIKE(C.categorybrand, #{brand}))
+                         </if>
+                         <if test = "category != '' and brand !='' " >    
+                             WHERE REGEXP_LIKE(C.categorysort, #{category})
+                             and REGEXP_LIKE(C.categorybrand, #{brand}) )
+                         </if>
+      </if>                        
+      <if test="(sizes == '' and color == '' ) and (brand != '' or category != '' )">
+	     ) 	LEFT JOIN  ( SELECT PRODUCTID, COUNT(*) COUNT  FROM ORDERLIST  group BY PRODUCTID)
+        USING (PRODUCTID) 
+        ORDER BY PRODUCTPRICE ASC
+	  </if>  
+      <if test = "(category == '' and brand == '')">
+      						P.CATEGORYID = C.CATEGORYID
+      </if>					 
+  	<trim prefix="and">
+    <if test="sizes != '' ">
+        REGEXP_LIKE(P.PRODUCTSIZE, #{sizes})
+    </if>
+    </trim>
+    <trim prefix="and">
+    <if test="color != '' ">
+         REGEXP_LIKE(P.PRODUCTNAME, #{color})
+    </if>
+    </trim>
+    <if test=" (sizes != '' or color != '' )">
+		) LEFT JOIN  ( SELECT PRODUCTID, COUNT(*) COUNT  FROM ORDERLIST  group BY PRODUCTID)
+        USING (PRODUCTID) 
+        ORDER BY PRODUCTPRICE ASC
+    </if>
+   	 </if>
+   </select>
+   
+	<select id="sortByHighPrice" parameterType="string" resultType="product">
+     <if test="searchtext !=''" > 
+   	 <![CDATA[
+		  SELECT DISTINCT  PRODUCTNAME,CATEGORYID,PRODUCTIMAGEID,PRODUCTPRICE,PRODUCTIMAGEMAIN,CATEGORYBRAND,CATEGORYSORT, COUNT 
+                      FROM 
+                           ( 
+                            SELECT P.PRODUCTID,P.PRODUCTNAME,P.CATEGORYID,
+                            P.PRODUCTIMAGEID,P.PRODUCTPRICE,M.PRODUCTIMAGEMAIN,C.CATEGORYBRAND,C.CATEGORYSORT  
+                            FROM PRODUCT P, CATEGORIES C, PIMAGE M
+                            WHERE P.CATEGORYID = C.CATEGORYID
+                            AND P.PRODUCTIMAGEID = M.PRODUCTIMAGEID 
+                            AND P.PRODUCTNAME LIKE '%'||#{searchtext}||'%')
+                      LEFT JOIN  ( SELECT PRODUCTID, COUNT(*) COUNT  FROM ORDERLIST  group BY PRODUCTID)
+                      USING (PRODUCTID) 
+                      ORDER BY PRODUCTPRICE DESC
+            ]]>
+    </if> 
+   	<if test="searchtext =='' " > 
+		  SELECT DISTINCT  PRODUCTNAME,CATEGORYID,PRODUCTIMAGEID,PRODUCTPRICE,PRODUCTIMAGEMAIN,CATEGORYBRAND,CATEGORYSORT, COUNT 
+                      FROM 
+                           ( 
+                            SELECT P.PRODUCTID,P.PRODUCTNAME,P.CATEGORYID,
+                            P.PRODUCTIMAGEID,P.PRODUCTPRICE,M.PRODUCTIMAGEMAIN,C.CATEGORYBRAND,C.CATEGORYSORT  
+                            FROM PRODUCT P, CATEGORIES C, PIMAGE M
+                            WHERE P.PRODUCTIMAGEID = M.PRODUCTIMAGEID AND                      
+      <if test = "(category != ''  or brand != '')">
+                             P.CATEGORYID IN 
+                            (select C.categoryid from categories right join product using (categoryid)
+                        <if test = "category != ''  and brand == '' " >    
+                             WHERE REGEXP_LIKE(C.categorysort, #{category}))
+                         </if>
+                         <if test = "category == '' and brand != '' " >    
+                             WHERE REGEXP_LIKE(C.categorybrand, #{brand}))
+                         </if>
+                         <if test = "category != '' and brand !='' " >    
+                             WHERE REGEXP_LIKE(C.categorysort, #{category})
+                             and REGEXP_LIKE(C.categorybrand, #{brand}) )
+                         </if>
+      </if>                        
+      <if test="(sizes == '' and color == '' ) and (brand != '' or category != '' )">
+	     ) 	LEFT JOIN  ( SELECT PRODUCTID, COUNT(*) COUNT  FROM ORDERLIST  group BY PRODUCTID)
+        USING (PRODUCTID) 
+        ORDER BY PRODUCTPRICE DESC
+	  </if>  
+      <if test = "(category == '' and brand == '')">
+      						P.CATEGORYID = C.CATEGORYID
+      </if>					 
+  		<trim prefix="and">
+    <if test="sizes != '' ">
+        REGEXP_LIKE(P.PRODUCTSIZE, #{sizes})
+    </if>
+    </trim>
+    <trim prefix="and">
+    <if test="color != '' ">
+         REGEXP_LIKE(P.PRODUCTNAME, #{color})
+    </if>
+    </trim>
+    <if test=" (sizes != '' or color != '' )">
+		) LEFT JOIN  ( SELECT PRODUCTID, COUNT(*) COUNT  FROM ORDERLIST  group BY PRODUCTID)
+        USING (PRODUCTID) 
+        ORDER BY PRODUCTPRICE DESC
+    </if>
+   	 </if>
+   	 
+   </select>
+   
+   <select id="sortByBestProduct" parameterType="string" resultType="product">
+    <if test="searchtext !=''" > 
+   	 <![CDATA[
+		  SELECT DISTINCT  PRODUCTNAME,CATEGORYID,PRODUCTIMAGEID,PRODUCTPRICE,PRODUCTIMAGEMAIN,CATEGORYBRAND,CATEGORYSORT, COUNT 
+                      FROM 
+                           ( 
+                            SELECT P.PRODUCTID,P.PRODUCTNAME,P.CATEGORYID,
+                            P.PRODUCTIMAGEID,P.PRODUCTPRICE,M.PRODUCTIMAGEMAIN,C.CATEGORYBRAND,C.CATEGORYSORT  
+                            FROM PRODUCT P, CATEGORIES C, PIMAGE M
+                            WHERE P.CATEGORYID = C.CATEGORYID
+                            AND P.PRODUCTIMAGEID = M.PRODUCTIMAGEID 
+                            AND P.PRODUCTNAME LIKE '%'||#{searchtext}||'%')
+                      LEFT JOIN  ( SELECT PRODUCTID, COUNT(*) COUNT  FROM ORDERLIST  group BY PRODUCTID)
+                      USING (PRODUCTID) 
+                      ORDER BY COUNT DESC NULLS LAST
+            ]]>
+    </if> 
+   	<if test="searchtext =='' " > 
+		  SELECT DISTINCT  PRODUCTNAME,CATEGORYID,PRODUCTIMAGEID,PRODUCTPRICE,PRODUCTIMAGEMAIN,CATEGORYBRAND,CATEGORYSORT, COUNT 
+                      FROM 
+                           ( 
+                            SELECT P.PRODUCTID,P.PRODUCTNAME,P.CATEGORYID,
+                            P.PRODUCTIMAGEID,P.PRODUCTPRICE,M.PRODUCTIMAGEMAIN,C.CATEGORYBRAND,C.CATEGORYSORT  
+                            FROM PRODUCT P, CATEGORIES C, PIMAGE M
+                            WHERE P.PRODUCTIMAGEID = M.PRODUCTIMAGEID AND                      
+      <if test = "(category != ''  or brand != '')">
+                             P.CATEGORYID IN 
+                            (select C.categoryid from categories right join product using (categoryid)
+                        <if test = "category != ''  and brand == '' " >    
+                             WHERE REGEXP_LIKE(C.categorysort, #{category}))
+                         </if>
+                         <if test = "category == '' and brand != '' " >    
+                             WHERE REGEXP_LIKE(C.categorybrand, #{brand}))
+                         </if>
+                         <if test = "category != '' and brand !='' " >    
+                             WHERE REGEXP_LIKE(C.categorysort, #{category})
+                             and REGEXP_LIKE(C.categorybrand, #{brand}) )
+                         </if>
+      </if>                        
+      <if test="(sizes == '' and color == '' ) and (brand != '' or category != '' )">
+	     ) 	LEFT JOIN  ( SELECT PRODUCTID, COUNT(*) COUNT  FROM ORDERLIST  group BY PRODUCTID)
+        USING (PRODUCTID) 
+        ORDER BY COUNT DESC NULLS LAST 
+	  </if>  
+      <if test = "(category == '' and brand == '')">
+      						P.CATEGORYID = C.CATEGORYID
+      </if>					 
+  	<trim prefix="and">
+    <if test="sizes != '' ">
+        REGEXP_LIKE(P.PRODUCTSIZE, #{sizes})
+    </if>
+    </trim>
+    <trim prefix="and">
+    <if test="color != '' ">
+         REGEXP_LIKE(P.PRODUCTNAME, #{color})
+    </if>
+    </trim>
+    <if test=" (sizes != '' or color != '' )">
+		) LEFT JOIN  ( SELECT PRODUCTID, COUNT(*) COUNT  FROM ORDERLIST  group BY PRODUCTID)
+        USING (PRODUCTID) 
+        ORDER BY COUNT DESC NULLS LAST 
+    </if>
+   	 </if>
+   </select>
+   
+	 <!-- <select id="detailSearch" parameterType="hashmap" resultType="productVO">
+   	 <![CDATA[
+         select * from product where REGEXP_LIKE(PRODUCTSIZE,#{sizes}) and REGEXP_LIKE(PRODUCTNAME,#{color}) 
+         AND categoryid in (select categoryid from categories right join product using (categoryid)
+		where REGEXP_LIKE(categorybrand, #{brand}) and REGEXP_LIKE(categorysort, #{category})
+		)
+            ]]>
+   	</select>  -->
+   <select id="detailSearch" parameterType="hashmap" resultType="product">
+	  <if test="searchtext =='' " > 
+		  SELECT DISTINCT  PRODUCTNAME,CATEGORYID,PRODUCTIMAGEID,PRODUCTPRICE,PRODUCTIMAGEMAIN,CATEGORYBRAND,CATEGORYSORT, COUNT 
+                      FROM 
+                           ( 
+                            SELECT P.PRODUCTID,P.PRODUCTNAME,P.CATEGORYID,
+                            P.PRODUCTIMAGEID,P.PRODUCTPRICE,M.PRODUCTIMAGEMAIN,C.CATEGORYBRAND,C.CATEGORYSORT  
+                            FROM PRODUCT P, CATEGORIES C, PIMAGE M
+                            WHERE P.PRODUCTIMAGEID = M.PRODUCTIMAGEID AND                      
+      <if test = "(category != ''  or brand != '')">
+                             P.CATEGORYID IN 
+                            (select C.categoryid from categories right join product using (categoryid)
+                        <if test = "category != ''  and brand == '' " >    
+                             WHERE REGEXP_LIKE(C.categorysort, #{category}))
+                         </if>
+                         <if test = "category == '' and brand != '' " >    
+                             WHERE REGEXP_LIKE(C.categorybrand, #{brand}))
+                         </if>
+                         <if test = "category != '' and brand !='' " >    
+                             WHERE REGEXP_LIKE(C.categorysort, #{category})
+                             and REGEXP_LIKE(C.categorybrand, #{brand}) )
+                         </if>
+      </if>                        
+      <if test="(sizes == '' and color == '' ) and (brand != '' or category != '' )">
+	     ) 	LEFT JOIN  ( SELECT PRODUCTID, COUNT(*) COUNT  FROM ORDERLIST  group BY PRODUCTID)
+        USING (PRODUCTID) 
+        ORDER BY COUNT DESC NULLS LAST 
+	  </if>  
+      <if test = "(category == '' and brand == '')">
+      						P.CATEGORYID = C.CATEGORYID
+      </if>					 
+  	<trim prefix="and">
+    <if test="sizes != '' ">
+        REGEXP_LIKE(P.PRODUCTSIZE, #{sizes})
+    </if>
+    </trim>
+     <trim prefix="and">
+    <if test="color != '' ">
+         REGEXP_LIKE(P.PRODUCTNAME, #{color})
+    </if>
+     </trim>
+    <if test=" (sizes != '' or color != '' )">
+		) LEFT JOIN  ( SELECT PRODUCTID, COUNT(*) COUNT  FROM ORDERLIST  group BY PRODUCTID)
+        USING (PRODUCTID) 
+        ORDER BY COUNT DESC NULLS LAST 
+    </if>
+   	 </if>
+</select>  
+
+   <select id="sortByNewProduct" parameterType="hashmap" resultType="product">
+   <if test="searchtext !=''" > 
+   	 <![CDATA[
+		  SELECT DISTINCT  PRODUCTNAME,CATEGORYID,PRODUCTIMAGEID,PRODUCTPRICE,PRODUCTIMAGEMAIN,CATEGORYBRAND,CATEGORYSORT, COUNT,PRODUCTDATE 
+                      FROM 
+                           ( 
+                            SELECT P.PRODUCTID,P.PRODUCTNAME,P.CATEGORYID,
+                            P.PRODUCTIMAGEID,P.PRODUCTPRICE,M.PRODUCTIMAGEMAIN,C.CATEGORYBRAND,C.CATEGORYSORT,P.PRODUCTDATE  
+                            FROM PRODUCT P, CATEGORIES C, PIMAGE M
+                            WHERE P.CATEGORYID = C.CATEGORYID
+                            AND P.PRODUCTIMAGEID = M.PRODUCTIMAGEID 
+                            AND P.PRODUCTNAME LIKE '%'||#{searchtext}||'%')
+                      LEFT JOIN  ( SELECT PRODUCTID, COUNT(*) COUNT  FROM ORDERLIST  group BY PRODUCTID)
+                      USING (PRODUCTID) 
+                      ORDER BY PRODUCTDATE DESC
+            ]]>
+    </if> 
+   	<if test="searchtext =='' " > 
+		  SELECT DISTINCT  PRODUCTNAME,CATEGORYID,PRODUCTIMAGEID,PRODUCTPRICE,PRODUCTIMAGEMAIN,CATEGORYBRAND,CATEGORYSORT, COUNT,PRODUCTDATE 
+                      FROM 
+                           ( 
+                            SELECT P.PRODUCTID,P.PRODUCTNAME,P.CATEGORYID,
+                            P.PRODUCTIMAGEID,P.PRODUCTPRICE,M.PRODUCTIMAGEMAIN,C.CATEGORYBRAND,C.CATEGORYSORT,P.PRODUCTDATE  
+                            FROM PRODUCT P, CATEGORIES C, PIMAGE M
+                            WHERE P.PRODUCTIMAGEID = M.PRODUCTIMAGEID AND                      
+      <if test = "(category != ''  or brand != '')">
+                             P.CATEGORYID IN 
+                            (select C.categoryid from categories right join product using (categoryid)
+                        <if test = "category != ''  and brand == '' " >    
+                             WHERE REGEXP_LIKE(C.categorysort, #{category}))
+                         </if>
+                         <if test = "category == '' and brand != '' " >    
+                             WHERE REGEXP_LIKE(C.categorybrand, #{brand}))
+                         </if>
+                         <if test = "category != '' and brand !='' " >    
+                             WHERE REGEXP_LIKE(C.categorysort, #{category})
+                             and REGEXP_LIKE(C.categorybrand, #{brand}) )
+                         </if>
+      </if>                        
+      <if test="(sizes == '' and color == '' ) and (brand != '' or category != '' )">
+	     ) 	LEFT JOIN  ( SELECT PRODUCTID, COUNT(*) COUNT  FROM ORDERLIST  group BY PRODUCTID)
+        USING (PRODUCTID) 
+        ORDER BY PRODUCTDATE DESC
+	  </if>  
+      <if test = "(category == '' and brand == '')">
+      						P.CATEGORYID = C.CATEGORYID
+      </if>					 
+  	<trim prefix="and">
+    <if test="sizes != '' ">
+        REGEXP_LIKE(P.PRODUCTSIZE, #{sizes})
+    </if>
+    <if test="color != '' ">
+         REGEXP_LIKE(P.PRODUCTNAME, #{color})
+    </if>
+    <if test=" (sizes != '' or color != '' )">
+		) LEFT JOIN  ( SELECT PRODUCTID, COUNT(*) COUNT  FROM ORDERLIST  group BY PRODUCTID)
+        USING (PRODUCTID) 
+        ORDER BY PRODUCTDATE DESC
+    </if>
+    </trim>
+   	 </if>
+   
+	</select>
+
+
+
+</mapper>

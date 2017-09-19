@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="notice">
+      
+   <!-- 공지사항 전체목록  -->
+   <select id="selectList" resultType="notice">
+		SELECT BOARDNO,BOARDTYPENO,BOARDTITLE,BOARDCONTENT,BOARDWRITER,BOARDDATE,READCOUNT,RN,REPLYCOUNT
+		FROM (
+    			SELECT A.*, ROWNUM AS RN
+    			FROM(
+    					SELECT BOARDNO,BOARDTYPENO,BOARDTITLE,BOARDCONTENT,BOARDWRITER,BOARDDATE,READCOUNT
+    					,(SELECT COUNT(*) FROM REPLY WHERE BOARDNO = b.BOARDNO) REPLYCOUNT
+         			 	FROM BOARD b
+          		 	 	WHERE BOARDTYPENO = '3'
+          		 	 	AND BOARDSTATUS = 'N'
+          		 	 	<if test="search_option != 'all'">
+					      	AND ${search_option} LIKE '%' || #{search} || '%'
+				      	</if>
+				      	<if test="search_option == 'all'">
+				      		AND (BOARDTITLE LIKE '%' || #{search} || '%' 
+				      		OR BOARDWRITER LIKE '%' || #{search} || '%')
+				     	</if>
+         	 		 	ORDER BY BOARDNO DESC
+          		)A
+      	)
+		WHERE RN BETWEEN #{start} AND #{end}
+   </select>
+   
+   <!-- 공지사항 등록 -->
+   <insert id="insertNotice" parameterType="notice">
+   		insert into BOARD (BOARDNO,BOARDTITLE,BOARDCONTENT,BOARDWRITER,BOARDTYPENO,READCOUNT,BOARDDATE,BOARDSTATUS)
+   		values (NVL((SELECT MAX(BOARDNO)+1 FROM BOARD WHERE BOARDTYPENO = '3'),1)
+   				,#{boardtitle}
+   				,#{boardcontent}
+   				,#{boardwriter}
+   				,#{boardtypeno}
+   				,0
+   				,sysdate
+   				,'N'
+   				)
+   </insert>
+   
+    <!-- 공지사항 조회수 증가 -->
+   <update id="countUp">
+   		UPDATE BOARD
+   		SET	READCOUNT = READCOUNT + 1
+   		WHERE BOARDNO = #{boardno}
+   </update>
+   
+   <!-- 게시물 총갯수 -->
+   <select id="noticeCount" resultType="Integer">
+   		SELECT COUNT(*)
+		FROM (
+		      SELECT BOARDTYPENO
+		      FROM BOARD
+		      WHERE BOARDTYPENO = '3'
+		      <if test="search_option != 'all'">
+		      	AND ${search_option} LIKE '%' || #{search} || '%'
+		      </if>
+		      <if test="search_option == 'all'">
+		      	AND (BOARDTITLE LIKE '%' || #{search} || '%' 
+		      		OR BOARDWRITER LIKE '%' || #{search} || '%')
+		      </if>
+     	 )
+   </select>
+   
+	<!--    ${변수} => 따옴표가 제거됨
+   #{변수} => 따옴표가 들어감 -->
+   
+   <!-- 수정화면 -->
+   <select id="noticeModifyView" parameterType="Integer" resultType="notice">
+   		SELECT	BOARDNO,BOARDTITLE,BOARDCONTENT
+		FROM BOARD
+		WHERE BOARDNO = #{boardno}
+		AND BOARDSTATUS = 'N'
+   </select>
+   
+   
+   <!-- 수정  -->
+   <update id="noticeModify" parameterType="notice">
+   		UPDATE BOARD
+   		SET BOARDTITLE = #{boardtitle}
+   		,BOARDCONTENT = #{boardcontent}
+   		WHERE BOARDNO = #{boardno}
+   </update>
+   
+   <!-- 공지사항 상세화면 -->
+   <select id="selectOne" parameterType="Integer" resultType="notice">
+		SELECT BOARDNO,BOARDWRITER,BOARDTITLE,BOARDCONTENT
+		FROM BOARD
+		WHERE BOARDNO = #{boardno}
+   </select>
+   
+   
+     <!-- 수정  -->
+   <update id="noticeDelete" parameterType="notice">
+   		UPDATE BOARD
+   		SET BOARDSTATUS = #{boardstatus}
+   		WHERE BOARDNO = #{boardno}
+   </update>
+   
+   
+</mapper>

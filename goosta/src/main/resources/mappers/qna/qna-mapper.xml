@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="qna">
+
+<!-- qna 글등록  -->
+<insert id="writeQna" parameterType="qna">
+INSERT INTO QUESTION VALUES(
+(SELECT DISTINCT NVL((SELECT MAX(QUESTIONNO)+1 FROM QUESTION),1) FROM QUESTION),
+#{questiontype},
+#{memberid},
+#{questionemail},
+#{questiontitle},
+#{questioncontent},
+SYSDATE,
+'N'
+)
+</insert>
+
+<!--qna 전체 조회  -->
+<select id="selectQnaList" resultType="qna">
+SELECT * FROM QUESTION
+ORDER BY QUESTIONNO DESC
+</select>
+
+<!--qna 문의유형순 조회  -->
+<select id="qnaManagerType" resultType="qna">
+SELECT * FROM QUESTION
+ORDER BY QUESTIONTYPE, QUESTIONDATE DESC
+</select>
+
+<!--qna 최근날짜순 조회  -->
+<select id="qnaManagerType2" resultType="qna">
+SELECT * FROM QUESTION
+ORDER BY QUESTIONDATE DESC
+</select>
+<!--qna 상세보기  -->
+<select id="qnaDetail" parameterType="int" resultType="qna">
+SELECT * FROM QUESTION
+WHERE QUESTIONNO = #{questionno}
+</select>
+<!--qna 답변여부 수정 -->
+<update id="updateQnaStatus" parameterType="int">
+UPDATE QUESTION
+SET QUESTIONSTATUS = 'Y'
+WHERE QUESTIONNO = #{questionno}
+</update>
+
+<!-- 회원별 1:1 문의내역 조회  -->
+<select id="viewMyQnaList" parameterType="String" resultType="qna">
+SELECT QUESTIONTYPE, QUESTIONTITLE, QUESTIONDATE, QUESTIONSTATUS
+FROM QUESTION
+WHERE MEMBERID = #{memberid}
+</select>
+</mapper>

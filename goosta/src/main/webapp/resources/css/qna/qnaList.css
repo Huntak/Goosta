@@ -1,0 +1,143 @@
+@CHARSET "UTF-8";
+	html, body {
+	padding : 0px;
+	margin : 0px;
+}
+
+#contents{
+		width: 1000px;
+		height: 400px;
+		margin: auto;	
+	}
+	
+	#search{
+		dispaly: inline;		
+		width: 1500px;
+		height: 30px;		
+		margin: 10px;
+	}
+	section{
+		margin-top: 100px;
+		margin-left: 100px;
+	}
+	#btnSea{
+		margin-left: 10px;
+	}
+	#contents table{
+		width: 1000px;
+		text-align: center;
+		margin: auto;
+		border-bottom : 1px solid lightgray;
+	}
+#contents table td{
+border-top : 1px solid lightgray;
+}	
+
+tr.tr1{ 
+		
+		background: black;
+	color: white;
+		
+	}  
+	
+
+
+#btnchange{
+	position: relative;
+	left: 1420px;
+	margin-top: 10px;
+	width:100px;	
+}
+
+#change{
+	width: 100px;
+	height: 30px;
+}
+
+fieldset{
+	width:1520px;
+	border: 1px solid lightgray;
+}
+
+ td.member_value{
+ text-align: center;
+ }
+ 
+ #title{
+ 	margin-top: 50px;
+ 	margin-left: 50px;
+ }
+	#qnatype{
+		width:150px;
+	}
+	#mamberid{
+	width:200px;
+	}
+	#qnatitle{
+	width:450px;
+	}
+	#qnadate{
+	width : 200px;
+	}
+	#status{
+	width : 100px;
+	}
+	.tr1 th{
+		text-align:center;
+	}
+	#change{
+		position: relative;
+	    left: -20px;
+		display: inline-block;
+	    width: 120px;
+	    height: 34px;
+	    text-align: center;
+	    line-height: 36px;
+	    background: #027dbf;
+	    border:none;
+	    margin-right: 20px;
+	    color:white;
+	}
+	#sear{
+		position: relative;
+	    left: -20px;
+		display: inline-block;
+	    width: 100px;
+	    height: 30px;
+	    text-align: center;
+	    line-height: 26px;
+	    background: #027dbf;
+	    border:none;
+	    margin-left: 20px;
+	    color:white;
+	    
+	}
+	#keyword{
+		height: 30px;
+		border: 1px solid lightgray;
+	}
+	#searchsel{
+		width: 120px;
+		height: 30px;
+		border: 1px solid lightgray;
+	}
+	#keyword{
+		display: inline-block;
+	}
+	#date{
+		display: inline-block;
+	}
+	.data2{
+		width: 150px;
+		height: 30px;
+		border: 1px solid lightgray;
+	}
+#sort{
+	text-align: right;
+    width: 1315px;
+}	
+#sort select{
+width : 100px;
+height : 20px;
+margin-bottom: 10px;
+}

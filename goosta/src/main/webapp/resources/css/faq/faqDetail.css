@@ -1,0 +1,33 @@
+@CHARSET "UTF-8";
+#faqDetail_table{
+width: 70%;
+height : 300px;
+margin: auto;
+border-top : 1px solid lightgray;
+border-bottom : 1px solid lightgray;
+}
+#faqDetail_tr{
+background : #f6f6f6;
+}
+#faqDetail_tr td{
+height : 40px;
+}
+#faqContent_td{
+vertical-align : top;
+}
+#faqContent_div{
+width : 80%;
+padding-top: 20px;
+margin-left: 20px;
+}
+#toListBtn{
+    display: inline-block;
+    border: 1px solid lightgray;
+    height: 30px;
+    width: 50px;
+    text-align: center;
+    line-height: 30px;
+    margin-left: 920px;
+    margin-top: 8px;
+    cursor : pointer;
+}

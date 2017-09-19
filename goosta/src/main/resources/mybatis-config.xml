@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"   
+                               "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>      
+    <!-- Alias 설정 -->
+    <typeAliases>
+        <typeAlias alias="creviewVO" type="com.kh.goosta.creview.vo.CreviewVO"/>
+
+        <typeAlias alias="member" type="com.kh.goosta.member.vo.Member"/>
+        <typeAlias alias="report" type="com.kh.goosta.board.vo.ReportVO"/>
+       	<typeAlias alias="reportReply" type="com.kh.goosta.board.vo.ReplyVO"/>
+       	<typeAlias alias="notice" type="com.kh.goosta.board.vo.NoticeVO"/>
+        <typeAlias alias="product" type="com.kh.goosta.product.vo.ProductVO"/>
+        <typeAlias alias="productImage" type="com.kh.goosta.product.vo.ProductImageVO"/>
+    	<typeAlias alias="order" type="com.kh.goosta.orderandpay.vo.OrderAndPayVo"/>
+    	<typeAlias alias="faq" type="com.kh.goosta.faq.vo.FaqVo"/>
+    	<typeAlias alias="shand"  type="com.kh.goosta.board.vo.ShandVo"/>
+        <typeAlias alias="shandimage"  type="com.kh.goosta.boardimage.vo.ShandImageVo"/>
+        <typeAlias alias="reply"  type="com.kh.goosta.reply.vo.ReplyVo"/>
+        <typeAlias alias="fboard"  type="com.kh.goosta.board.vo.FreeBoard"/>
+        <typeAlias alias="mileage" type="com.kh.goosta.mileage.vo.MileageVo"/>
+        <typeAlias alias="sreview" type="com.kh.goosta.board.vo.SReviewVO"/>
+        <typeAlias alias="grade" type="com.kh.goosta.grade.vo.GradeVO"/>
+        <typeAlias alias="shopNotice"  type="com.kh.goosta.board.vo.ShopNoticeVo"/>
+      	<typeAlias alias="qna"  type="com.kh.goosta.question.vo.QuestionVo"/>
+      	<typeAlias alias="cart"  type="com.kh.goosta.shoppingcart.vo.ShoppingCartVo"/>
+    	<typeAlias alias="mile" type="com.kh.goosta.mileage.vo.MileageVo"/>
+   		<typeAlias alias="PlusVO"  type="com.kh.goosta.manager.vo.PlusVO"/>
+   	
+    </typeAliases>
+     
+    
+    <!-- Sql Mapper 설정 -->
+    <mappers>
+    	<mapper resource="mappers/search-mapper.xml"/>
+        <mapper resource="mappers/member-mapper.xml"/>
+        <mapper resource="mappers/creview-mapper.xml"/>
+   		<mapper resource="mappers/order/order-mapper.xml"/>
+        <mapper resource="mappers/report/report-mapper.xml"/>
+        <mapper resource="mappers/category/category-mapper.xml"/>
+        <mapper resource="mappers/notice/notice-mapper.xml"/>
+        <mapper resource="mappers/product/product-mapper.xml"/>
+        <mapper resource="mappers/product/productImage-mapper.xml"/>
+        <mapper resource="mappers/faq/faq-mapper.xml"/>
+        <mapper resource="mappers/shand/shand-mapper.xml"/>
+        <mapper resource="mappers/shand/shandImage-mapper.xml"/>
+        <mapper resource="mappers/shand/shandreply-mapper.xml"/>
+        <mapper resource="mappers/freeboard-mapper.xml"/>
+        <mapper resource="mappers/mileage/mileage-mapper.xml"/>
+   		<mapper resource="mappers/manager/manager-mapper.xml"/>
+   		<mapper resource="mappers/mypage/mypage-mapper.xml"/>
+        <mapper resource="mappers/sreview/sreview-mapper.xml"/>
+        <mapper resource="mappers/grade/grade-mapper.xml"/>
+        <mapper resource="mappers/shopNotice/shopNotice-mapper.xml"/>
+   		<mapper resource="mappers/qna/qna-mapper.xml"/>
+   		<mapper resource="mappers/shoppingcart/shoppingcart-mapper.xml"/>
+   		<mapper resource="mappers/manager/plus-mapper.xml"/>
+    
+    </mappers>
+    
+</configuration>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="productImageMapper">
+
+	<select id="selectProductImage" parameterType="String" resultType="productImage">
+		<![CDATA[
+			select * 
+			from pimage 
+			where productimageid 
+			in (select productimageid from product where productname = #{productname})
+		]]>
+	</select>
+	<select id="selectProductsMainImages" parameterType="String" resultType="String">
+		<![CDATA[
+			select productimagemain
+			from pimage
+			where productimageid
+			in(select productimageid from product where productname like #{productname}||'%') 
+			order by productimageid
+		]]>
+	</select>
+	<select id="selectProductsMainImage" parameterType="int" resultType="String">
+		<![CDATA[
+			select productimagemain
+			from pimage
+			where productimageid
+			in(select productimageid from product where productid = #{productid})
+		]]>
+	</select>
+	
+</mapper>

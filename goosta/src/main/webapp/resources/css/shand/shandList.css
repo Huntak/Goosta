@@ -1,0 +1,61 @@
+@CHARSET "UTF-8";
+/* -------------------------
+		ShandList CSS 
+----------------------------*/
+#frame{
+width : 1200px;
+margin : auto;
+}
+#shand_table{
+margin-top : 50px;
+width : 100%;
+border-collapse : collapse;
+color : gray;
+text-align : center;	
+border-top : 1px solid lightgray;
+}
+#shand_table td{
+height : 200px;
+border-bottom : 1px solid lightgray;
+text-align : center;
+}
+#shand_table tr:hover{
+/* opacity : 0.5; */
+}
+#info_td div{
+text-align : left;
+margin-left : 20px;
+}
+#price_div{
+margin-top : 6px;
+margin-bottom : 10px;
+}
+#write{
+    width: 85px;
+    height: 35px;
+    border: 1px solid gray;
+    display: block;
+    text-align: center;
+    line-height: 34px;
+    margin-top: 20px;
+    margin-left: 1115px;
+    color: white;
+    background: gray;
+    font-weight: bold;
+}
+#write a:hover{
+text-decoratiocn : none;
+}
+#write{
+cursor : pointer;
+}
+/* .images{
+margin : 0px;
+} */
+.item{
+height : 300px;
+}
+#soldout{
+background : #f6f6f6;
+opacity : 0.3;
+}

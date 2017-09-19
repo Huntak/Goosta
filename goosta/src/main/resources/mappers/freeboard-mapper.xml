@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fboard">
+     
+   <!-- 게시판 전체목록  -->
+   <select id="selectListfreeboard" resultType="fboard">
+		SELECT *
+		FROM (
+    			SELECT A.*, ROWNUM AS RN
+    			FROM(
+    					SELECT 					BOARDNO,BOARDTYPENO,BOARDTITLE,BOARDCONTENT,BOARDWRITER,BOARDDATE,BOARDPREFIX,READCOUNT
+         			 	FROM BOARD
+          		 	 	WHERE BOARDTYPENO = '4'
+          		 	 <if test="search_option != 'all'">
+		      			AND ${search_option} LIKE '%' || #{search} || '%'
+		      		</if>
+		      		<if test="search_option == 'all'">
+				      		AND (BOARDTITLE LIKE '%' || #{search} || '%' 
+				      		OR BOARDWRITER LIKE '%' || #{search} || '%')
+				     	</if>  
+         	 		 	ORDER BY BOARDNO DESC
+          		)A
+      	)
+		WHERE RN BETWEEN #{start} AND #{end}
+   </select>
+   
+   <!-- 게시판 등록 -->
+   <insert id="insertfboard" parameterType="fboard">
+   		insert into BOARD 
+   		values ((SELECT MAX(BOARDNO)+1 FROM BOARD)
+   				,#{boardtypeno}
+   				,#{boardtitle}
+   				,#{boardcontent}
+   				,#{boardwriter}
+   				,sysdate
+   				,0
+   				,(SELECT MAX(BOARDNO)+1 FROM BOARD)
+   				,1
+   				,1
+   				,'y'
+   				,#{boardprefix}
+   				,null
+   				)
+   </insert>
+   
+
+<!-- 게시판 상세화면 -->
+   <select id="selectOne" parameterType="Integer" resultType="fboard">
+		SELECT	*
+		FROM BOARD 
+		WHERE BOARDNO = #{boardno}
+		AND BOARDNO = #{boardno}
+   </select>  
+   
+    <!-- 게시판 조회수 증가 -->
+   <update id="fcountUp">
+   		UPDATE BOARD
+   		SET	READCOUNT = READCOUNT + 1
+   		WHERE BOARDNO = #{boardno}
+   </update>
+   
+   <!-- 게시물 총갯수 -->
+   <select id="fboardCount" resultType="Integer">
+   		SELECT COUNT(*)
+		FROM (
+		      SELECT BOARDNO
+		      FROM BOARD
+		      WHERE BOARDTYPENO = '4'
+		      <if test="search_option != 'all'">
+		      	AND ${search_option} LIKE '%' || #{search} || '%'
+		      </if>
+		      <if test="search_option == 'all'">
+		      	AND (boardtitle LIKE '%' || #{search} || '%' or boardwriter like '%' || #{search} || '%' or boardcontent like '%' || #{search} || '%')
+		      </if>
+     	 )
+   </select>
+   
+   <!-- 검색(전체,작성자,제목) -->
+   <select id="boardSearch" resultType="fboard">
+   		SELECT BOARDNO,BOARDTYPENO,BOARDTITLE,BOARDCONTENT,BOARDWRITER,BOARDDATE,READCOUNT,RN
+		FROM (
+    			SELECT A.*, ROWNUM AS RN
+    			FROM(
+    					SELECT BOARDNO,BOARDTYPENO,BOARDTITLE,BOARDCONTENT,BOARDWRITER,BOARDDATE,READCOUNT
+         			 	FROM BOARD
+          		 	 	WHERE BOARDTYPENO = '4'
+          		 	 	AND ${search_option} like '%' || #{search} || '%'
+         	 		 	ORDER BY BOARDNO DESC
+          		)A
+      	)
+		WHERE RN BETWEEN #{start} AND #{end}	
+   </select>
+   
+   <select id="selectfree" parameterType="fboard" resultType="fboard">
+   	select * from board where boardno = #{boardno}
+   </select>
+   
+<!--    ${변수} => 따옴표가 제거됨
+   #{변수} => 따옴표가 들어감 -->
+   
+</mapper>

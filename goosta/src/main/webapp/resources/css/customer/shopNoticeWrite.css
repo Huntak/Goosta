@@ -1,0 +1,102 @@
+@CHARSET "UTF-8";
+
+div.reportboard h3{
+	border-bottom: 3px solid #666;
+    color: #000;
+    padding: 13px 0;
+    margin-bottom: 10px;
+    font: bold 14px 'Nanum Gothic',Nanum Gothic,'Dotum',dotum;
+}
+.cont758 {
+  width : 1100px;
+height : 900px;
+margin : auto;
+}
+table{
+margin : auto;
+width : 79%;
+border-top : 1px solid lightgray;
+border-collapse : collapse;
+}
+td{
+border-bottom : 1px solid lightgray;
+height : 50px;
+}
+.th_title{
+width : 40%;
+background : #f6f6f6;
+text-align : center;
+color : gray;
+border-bottom: 1px solid lightgray;
+}
+.td_con input{
+ height : 20px;
+ margin-left : 10px;
+ border : 1px solid lightgray;
+}
+#title{
+width : 500px;
+height: 30px;
+border: 1px solid lightgray;
+margin-bottom :0;
+}
+#price{
+	width : 150px;
+}
+#brand{
+	width : 150px;
+}
+textarea{
+	border : 1px solid lightgray;
+	margin : 10px;
+	resize : none;
+	width : 700px;
+	height : 500px;
+}
+.button{
+	width : 100px;
+	height : 30px;
+	background : gray;
+	border-radius : 3px;
+	border : 2px solid gray;
+	color : white;
+	margin : 10px;
+}
+
+#enroll{
+	border : 1px solid lightgray;
+	width : 100%;
+	height : 86px;
+	background : white;
+}
+
+.selecttd{
+	margin-left: 10px;
+	width: 150px;
+	height: 35px;
+	border: 1px solid lightgray;
+}
+
+.btn-ctm.btn-blue{
+	margin-top: 15px;
+	width: 130px;
+	height: 38px;
+	border: none;
+	color: white;
+	float: right;
+	margin-right: 20px;
+}
+
+.btn-ctm.btn-blue{background: #027dbf;}
+
+.item {
+    height: 300px;
+}
+
+.btn-area{
+	margin-right: 97px;
+}
+
+#file_input{
+	height : 30px;
+}

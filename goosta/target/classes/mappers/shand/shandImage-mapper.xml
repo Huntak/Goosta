@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shandimage">
+
+<insert id="insertShandImage1" parameterType="HashMap">
+INSERT INTO BOARDIMAGE VALUES (
+(SELECT DISTINCT NVL((SELECT MAX(BOARDIMAGEID)+1 FROM BOARDIMAGE), 1) FROM BOARDIMAGE), 
+#{boardimage1},
+null,
+null,
+null,
+null
+)
+</insert>
+<insert id="insertShandImage2" parameterType="HashMap">
+INSERT INTO BOARDIMAGE VALUES (
+(SELECT DISTINCT NVL((SELECT MAX(BOARDIMAGEID)+1 FROM BOARDIMAGE), 1) FROM BOARDIMAGE), 
+#{boardimage1},
+#{boardimage2},
+null,
+null,
+null
+)
+</insert>
+<insert id="insertShandImage3" parameterType="HashMap">
+INSERT INTO BOARDIMAGE VALUES (
+(SELECT DISTINCT NVL((SELECT MAX(BOARDIMAGEID)+1 FROM BOARDIMAGE), 1) FROM BOARDIMAGE), 
+#{boardimage1},
+#{boardimage2},
+#{boardimage3},
+null,
+null
+)
+</insert>
+<insert id="insertShandImage4" parameterType="HashMap">
+INSERT INTO BOARDIMAGE VALUES (
+(SELECT DISTINCT NVL((SELECT MAX(BOARDIMAGEID)+1 FROM BOARDIMAGE), 1) FROM BOARDIMAGE), 
+#{boardimage1},
+#{boardimage2},
+#{boardimage3},
+#{boardimage4},
+null
+)
+</insert>
+<insert id="insertShandImage5" parameterType="HashMap">
+INSERT INTO BOARDIMAGE VALUES (
+(SELECT DISTINCT NVL((SELECT MAX(BOARDIMAGEID)+1 FROM BOARDIMAGE), 1) FROM BOARDIMAGE), 
+#{boardimage1},
+#{boardimage2},
+#{boardimage3},
+#{boardimage4},
+#{boardimage5}
+)
+</insert>
+</mapper>

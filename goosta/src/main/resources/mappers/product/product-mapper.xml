@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="productMapper">
+
+	<select id="selectCategory" parameterType="String" resultType="String">
+		<![CDATA[
+			select categorysort 
+			from categories 
+			where categoryid = 
+			(select distinct categoryid 
+			from categories 
+			right join product using (categoryid) 
+			where productname = #{productname})
+		]]>
+	</select>
+	<!-- <select id="selectProductColor" parameterType="String" resultType="String">
+		<![CDATA[
+			select distinct productname 
+			from product 
+			where productname like #{productnameShort}||'%'
+		]]>
+	</select> -->
+	<select id="selectProductSize" parameterType="String" resultType="product">
+		<![CDATA[
+			select * 
+			from product 
+			where productname = #{productname}
+		]]>
+	</select>
+	<select id="selectProductList" parameterType="String" resultType="product">
+		<![CDATA[
+			select * 
+			from product 
+			where productimageid = 
+			(select productimageid 
+			from pimage 
+			where productimagemain = #{productMainImage})
+		]]>
+	</select>
+	<select id="selectProductQuantity" parameterType="hashmap" resultType="int">
+		<![CDATA[
+			select productquantity 
+			from product 
+			where productname = #{productname} 
+      		and productsize = #{productsize} 
+		]]>
+	</select>
+	<select id="selectProduct" parameterType="int" resultType="product">
+		<![CDATA[
+			select * 
+			from product 
+			where productid = #{productid} 
+		]]>
+	</select>
+	<select resultType="product" parameterType="HashMap" id="selectOnePro"> select * from product where productname = #{productname} and productsize = #{productsize} </select>
+	
+</mapper>

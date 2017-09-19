@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="manager">
+
+   <select id="selectlistorderManager" resultType="order">
+   	select * from orderlist
+   	join orderstatus using(orderstatusnumber)
+   	join product using(productid)
+   	where orderlistid >1
+   </select>
+   
+   <select id = "ordersearchlistmanager" resultType="order">
+   		select * from orderlist
+   		join orderstatus using(orderstatusnumber)
+   		join product using(productid)  		
+   		
+   		<if test="orderSearch == 'all'  and keyword != ''">
+   		where 
+   			(memberid like '%'||#{keyword}||'%' or
+   			orderlistid like '%'||#{keyword}||'%' or
+   			orderlistname like '%'||#{keyword}||'%' or
+   			productname list '%'||#{keyword}||'%' or
+   			orderstatusstatus like '%'||#{keyword}||'%' or
+   			orderlistzipcode1||orderlistzipcode2||orderlistaddress1||orderlistaddress2 like '%'||#{keyword}||'%')
+   			and orderlistid > 1
+   		</if>
+   		<if test="orderSearch == 'all' and keyword == ''">
+   			where orderlistid > 1
+   		</if>
+   		<if test="orderSearch == 'ordernumber'">
+   		where 
+   			orderlistid like '%'||#{keyword}||'%'
+   			and orderlistid > 1
+   		</if>
+   		<if test="orderSearch == 'mid'">
+   		where
+   			memberid like '%'||#{keyword}||'%'
+   			and orderlistid > 1
+   		</if>
+   		<if test="orderSearch == 'pname'">
+   		where
+   			productname like '%'||#{keyword}||'%' 
+   			and orderlistid > 1
+   		</if>
+   		<if test="orderSearch == 'oname'">
+   		where
+   			orderlistname like '%'||#{keyword}||'%'
+   			and orderlistid > 1
+   		</if>
+   		<if test="orderSearch == 'oaddress'">
+   		where
+   			orderlistzipcode1||orderlistzipcode2||orderlistaddress1||orderlistaddress2 like '%'||#{keyword}||'%'
+   			and orderlistid > 1
+   		</if>
+   		<if test="orderSearch == 'orderstatus'">
+   		where	
+   			orderstatusstatus like '%'||#{keyword}||'%'
+   			and orderlistid > 1
+   		</if>
+   		<if test="orderSearch == 'orderdate'">
+   		<![CDATA[
+   		where
+   			 orderlistdate >= #{beforeDate} and orderlistdate <= #{afterDate}
+   			 and orderlistid > 1
+   			  ]]>
+   		</if>
+   		
+   </select>
+   <select id="selecto" resultType="order" parameterType="order">
+   		select * from orderlist
+   			join orderstatus using(orderstatusnumber)
+   	join product using(productid)
+   	where orderlistid = #{orderlistid}
+   </select>
+   
+   <select id="memberlistmanager" resultType="member">
+   	select * from member where memberstatus = 'y'
+   </select>
+   <select id="membersearchManager" parameterType="HashMap" resultType="member">
+  select * from member
+   		where 
+   		<if test="memberSearch == 'all'">
+   			(memberid like '%'||#{keyword}||'%' or
+   			memberid like '%'||#{keyword}||'%' or
+   			membername like '%'||#{keyword}||'%' or
+   			memberphone1||memberphone2||memberphone3 like '%'||#{keyword}||'%' or
+   			memberaddress1||memberaddress2||memberaddress3||memberaddress4 like '%'||#{keyword}||'%')
+   		</if>
+   		<if test="memberSearch == 'mid'">
+   			memberid like '%'||#{keyword}||'%'
+   		</if>
+   		<if test="memberSearch == 'mname'">
+   			membername like '%'||#{keyword}||'%'
+   		</if>
+   		<if test="memberSearch == 'mphone'">
+   			memberphone1||memberphone2||memberphone3 like '%'||#{keyword}||'%'
+   		</if>
+   		<if test="memberSearch == 'maddress'">   		
+   			memberaddress1||memberaddress2||memberaddress3||memberaddress4 like '%'||#{keyword}||'%'
+   		</if>
+   		<if test="memberSearch == 'menrolldate'">
+   		<![CDATA[
+   			 memberenrolldate >= #{beforeDate} and memberenrolldate <= #{afterDate}
+   			  ]]>
+   		</if>
+   		and memberstatus = 'y'
+   </select>
+   <update id="updatemembermanager" parameterType="member">
+   		update member set 
+   		gradename = #{gradename},
+   		memberreport = #{memberreport}
+   		where memberid = #{memberid}
+   </update>
+   
+   <update id="delmembermanager" parameterType="member">
+   		update member set
+   		memberstatus = 'n'
+   		where memberid = #{memberid}
+   </update>
+  
+  	<select id="selectp" parameterType="product" resultType="product">
+  		select * 
+  		from product 
+  		join categories using(categoryid)
+  		where productid = #{productid}
+  	</select>
+  	
+  	   <select id="selectm2" parameterType="member" resultType="member">
+   	select * from member where memberid = #{memberid}
+   </select>
+   
+   <update id="orderlistorderupdate" parameterType="order" >
+   		update orderlist set
+   		orderstatusnumber = #{orderstatusnumber}
+   		where orderlistid = #{orderlistid}
+   </update>
+   <delete id="orderlistorderdel" parameterType="order">
+   		delete from orderlist 
+   		where orderlistid = #{orderlistid}
+   </delete>
+</mapper>

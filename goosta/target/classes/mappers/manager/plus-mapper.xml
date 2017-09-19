@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="plus">
+	<select id="showPlusList" parameterType="hashmap" resultType="hashmap">
+		select * from PLUSTABLE 
+	   	<if test="selected =='plusno' " > 
+	   	where PLUSNO = #{keyword}
+	   	<!-- LIKE '%'||#{keyword}||'%' -->
+		</if>
+		<if test="selected =='productid' " > 
+		where PRODUCTID LIKE '%'||#{keyword}||'%'
+		</if>
+		<if test="selected =='plusprice' " > 
+		where PLUSPRICE = #{keyword}
+		</if>
+		ORDER BY PLUSDATE DESC	 
+	</select>
+	<select id="showPlusListPop" parameterType="int" resultType="PlusVO">
+		select * from plustable where plusno = #{plusid}
+	</select>
+	<select id="plusManager" resultType="PlusVO">
+		select * from plustable
+	</select>
+	<update id="plusModify" parameterType ="hashmap">
+		update plustable set PRODUCTID = #{productid}
+									,PLUSDATE = #{plusdate}
+									, PLUSPRICE = #{plusprice}
+									,PLUSQUANTITY = #{plusquantity}	, PLUSTOTAL = #{plustotal}	
+		where PLUSNO = #{plusid} 
+	</update>
+	<delete id="plusDelete" parameterType = "int">
+		delete from PLUSTABLE where PLUSNO = #{plusno}
+	</delete>
+	<insert id="newPlus" parameterType ="hashmap">
+		insert into PLUSTABLE values ((SELECT NVL(MAX(PLUSNO)+1,1)FROM PLUSTABLE)
+		,#{productid},#{plusquantity},#{plustotal},#{plusprice}, SYSDATE)
+	</insert>
+</mapper>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="report">
+      
+   <!-- 신고게시판 전체목록  -->
+   <select id="selectList" resultType="report">
+		SELECT BOARDNO,BOARDTYPENO,BOARDTITLE,BOARDCONTENT,BOARDWRITER,BOARDDATE,READCOUNT,RN,REPLYCOUNT
+		FROM (
+    			SELECT A.*, ROWNUM AS RN
+    			FROM(
+    					SELECT BOARDNO,BOARDTYPENO,BOARDTITLE,BOARDCONTENT,BOARDWRITER,BOARDDATE,READCOUNT
+    					,(SELECT COUNT(*) FROM REPLY WHERE BOARDNO = b.BOARDNO) REPLYCOUNT
+         			 	FROM BOARD b
+          		 	 	WHERE BOARDTYPENO = '5'
+          		 	 	<if test="search_option != 'all'">
+					      	AND ${search_option} LIKE '%' || #{search} || '%'
+				      	</if>
+				      	<if test="search_option == 'all'">
+				      		AND (BOARDTITLE LIKE '%' || #{search} || '%' 
+				      		OR BOARDWRITER LIKE '%' || #{search} || '%')
+				     	</if>
+         	 		 	ORDER BY BOARDNO DESC
+          		)A
+      	)
+		WHERE RN BETWEEN #{start} AND #{end}
+   </select>
+   
+   <!-- 신고게시판 등록 -->
+   <insert id="insertReport" parameterType="report">
+   		insert into BOARD (BOARDNO,BOARDTITLE,BOARDCONTENT,BOARDWRITER,BOARDTYPENO,READCOUNT,BOARDDATE)
+   		values (NVL((SELECT MAX(BOARDNO)+1 FROM BOARD WHERE BOARDTYPENO = '5'),1)
+   				,#{boardtitle}
+   				,#{boardcontent}
+   				,#{boardwriter}
+   				,#{boardtypeno}
+   				,0
+   				,sysdate
+   				)
+   </insert>
+   
+    <!-- 신고게시판 등록 -->
+   <insert id="insertReport2" parameterType="report">
+   		insert into REPORT (BOARDNO,REPORTREASON)
+   		values ((SELECT MAX(BOARDNO) FROM BOARD WHERE BOARDTYPENO = '5')
+   				,#{reportreason}
+   				)
+   </insert>
+   
+    <!-- 신고게시판 상세화면 -->
+   <select id="selectOne" parameterType="Integer" resultType="report">
+		SELECT	b.BOARDNO,b.BOARDTITLE,b.BOARDCONTENT,r.REPORTREASON
+		FROM BOARD b, REPORT r
+		WHERE b.BOARDNO = #{boardno}
+		AND R.BOARDNO = #{boardno}
+   </select>
+   
+    <!-- 신고게시판 조회수 증가 -->
+   <update id="countUp">
+   		UPDATE BOARD
+   		SET	READCOUNT = READCOUNT + 1
+   		WHERE BOARDNO = #{boardno}
+   </update>
+   
+   <!-- 게시물 총갯수 -->
+   <select id="reportCount" resultType="Integer">
+   		SELECT COUNT(*)
+		FROM (
+		      SELECT BOARDTYPENO
+		      FROM BOARD
+		      WHERE BOARDTYPENO = '5'
+		      <if test="search_option != 'all'">
+		      	AND ${search_option} LIKE '%' || #{search} || '%'
+		      </if>
+		      <if test="search_option == 'all'">
+		      	AND (BOARDTITLE LIKE '%' || #{search} || '%' 
+		      		OR BOARDWRITER LIKE '%' || #{search} || '%')
+		      </if>
+     	 )
+   </select>
+   
+	<!--    ${변수} => 따옴표가 제거됨
+   #{변수} => 따옴표가 들어감 -->
+   
+   <!-- 수정화면 -->
+   <select id="reportModifyView" parameterType="Integer" resultType="report">
+   		SELECT	b.BOARDNO, b.BOARDTITLE,b.BOARDCONTENT,r.REPORTREASON
+		FROM BOARD b, REPORT r
+		WHERE b.BOARDNO = #{boardno}
+		AND R.BOARDNO = #{boardno}
+   </select>
+   
+   
+   <!-- 수정1  -->
+   <update id="reportModify" parameterType="report">
+   		UPDATE BOARD
+   		SET BOARDTITLE = #{boardtitle}
+   		,BOARDCONTENT = #{boardcontent}
+   		WHERE BOARDNO = #{boardno}
+   </update>
+   
+    <!-- 수정 2 -->
+   <update id="reportModify2">
+   		UPDATE REPORT
+   		SET REPORTREASON = #{reportreason}
+   		WHERE BOARDNO = #{boardno}
+   </update>
+   
+   <!-- 댓글 목록 -->
+    <select id="replyList" resultType="reportReply">
+   		SELECT * 
+   		FROM REPLY
+   		WHERE BOARDNO = #{boardno}
+   		AND REPLYSTATUS = 'Y'
+   		order by REPLYDATE 
+   </select>
+   
+   <!-- 댓글 등록 -->
+   <insert id="replyInsert">
+   		INSERT INTO REPLY (REPLYNO,REPLYCONTENT,REPLYWRITER,BOARDNO,REPLYDATE,REPLYSTATUS)
+   		VALUES((SELECT NVL(MAX(REPLYNO)+1,1)FROM REPLY)
+   				,#{replycontent}
+   				,#{replywriter}
+   				,#{boardno}
+   				,sysdate
+   				,'Y'
+   		)
+   </insert>
+   
+   <!-- 댓글 수정 -->
+   <update id="replyModify">
+   		UPDATE REPLY
+   		SET	REPLYCONTENT = #{replycontent}
+   			,REPLYDATE = sysdate
+   		WHERE REPLYNO = #{replyno}
+   </update>
+   
+   <!-- 댓글 등록 -->
+   <update id="replyDelete">
+   		UPDATE REPLY
+   		SET	REPLYSTATUS = 'N'
+   		WHERE REPLYNO = #{replyno}
+   </update>
+   
+</mapper>

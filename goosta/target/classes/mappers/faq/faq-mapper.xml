@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="faq">
+
+<!-- faqList 전체 조회 -->
+<select id="faqList" parameterType="HashMap" resultType="faq">
+SELECT 
+	* 
+FROM
+ (SELECT 
+	FID, 
+	FTITLE,
+	FCONTENT,
+	FDATE,
+	FCOUNT,
+	ANSWERTYPE,
+	 ROWNUM R 
+   FROM 
+  	(SELECT 
+  		* 
+     FROM 
+         FAQ
+     ORDER BY 
+          FID )
+  			 )  
+WHERE R BETWEEN #{startRow} AND #{endRow}
+</select>
+
+<!-- faqList 타입별로 조회 -->
+<select id="faqListType" parameterType="HashMap" resultType="faq">
+SELECT 
+	* 
+FROM
+ (SELECT 
+	FID, 
+	FTITLE,
+	FCONTENT,
+	FDATE,
+	FCOUNT,
+	ANSWERTYPE,
+	 ROWNUM R 
+   FROM 
+  	(SELECT 
+  		* 
+     FROM 
+         FAQ
+     WHERE ANSWERTYPE = #{answertype}
+     ORDER BY 
+          FID )
+  			 )  
+WHERE R BETWEEN #{startRow} AND #{endRow}
+</select>
+
+<!--faqList 검색(전체)  -->
+<select id="faqListSearch" parameterType="HashMap" resultType="faq">
+SELECT 
+	* 
+FROM
+ (SELECT 
+	FID, 
+	FTITLE,
+	FCONTENT,
+	FDATE,
+	FCOUNT,
+	ANSWERTYPE,
+	 ROWNUM R 
+   FROM 
+  	(SELECT 
+  		* 
+     FROM 
+         FAQ
+     WHERE FTITLE LIKE '%'||#{keyword}||'%'	 
+     ORDER BY 
+          FID )
+  			 )  
+WHERE R BETWEEN #{startRow} AND #{endRow}
+</select>
+
+<!--faqList 검색(타입별)  -->
+<select id="faqListSearchType" parameterType="HashMap" resultType="faq">
+SELECT 
+	* 
+FROM
+ (SELECT 
+	FID, 
+	FTITLE,
+	FCONTENT,
+	FDATE,
+	FCOUNT,
+	ANSWERTYPE,
+	 ROWNUM R 
+   FROM 
+  	(SELECT 
+  		* 
+     FROM 
+         FAQ
+     WHERE FTITLE LIKE '%'||#{keyword}||'%' AND ANSWERTYPE = #{answertype}	 
+     ORDER BY 
+          FID )
+  			 )  
+WHERE R BETWEEN #{startRow} AND #{endRow}
+</select>
+
+<!-- faqCount 조회(전체) -->
+<select id="faqCount" resultType="int">
+SELECT
+	COUNT(*)
+FROM 
+	FAQ
+</select>
+
+<!-- faqCount 조회(타입별) -->
+<select id="faqCountType" parameterType="String" resultType="int">
+SELECT
+	COUNT(*)
+FROM 
+	FAQ
+WHERE ANSWERTYPE = #{answertype}	
+</select>
+
+<!-- 검색 faqCount 조회(전체) -->
+<select id="faqCountSearch" parameterType="String" resultType="int">
+SELECT
+	COUNT(*)
+FROM 
+	FAQ
+WHERE FTITLE LIKE '%'||#{keyword}||'%'	
+</select>
+
+<!-- 검색 faqCount 조회(타입별) -->
+<select id="faqCountSearchType" parameterType="HashMap" resultType="int">
+SELECT
+	COUNT(*)
+FROM 
+	FAQ
+WHERE FTITLE LIKE '%'||#{keyword}||'%' AND ANSWERTYPE = #{answertype}	
+</select>
+
+<!--게시글 상세보기 -->
+<select id="faqDetail" parameterType="int" resultType="faq">
+SELECT * FROM FAQ
+WHERE FID = #{fid}
+</select>
+
+<!-- 조회수 증가 처리 -->
+<update id="faqUpCount" parameterType="int">
+UPDATE FAQ
+SET FCOUNT = (SELECT FCOUNT FROM FAQ WHERE FID = #{fid})+1 
+WHERE FID = #{fid}
+</update>
+
+<!-- 조회수 높은 게시물 5개  -->
+<select id="faqRank5" resultType="faq">
+<![CDATA[
+SELECT *
+FROM (SELECT FID, FTITLE, FCONTENT, FDATE, ANSWERTYPE, FCOUNT, (ROW_NUMBER() OVER(ORDER BY FCOUNT DESC))AS RANK
+FROM FAQ)
+WHERE RANK <= 5
+]]>
+</select>
+
+<insert id="insertFaq" parameterType="faq">
+INSERT INTO FAQ VALUES(
+(SELECT DISTINCT NVL((SELECT MAX(FID)+1 FROM FAQ),1) FROM FAQ),
+#{ftitle},
+#{fcontent},
+sysdate,
+0,
+#{answertype}
+)
+</insert>
+
+<select id="viewUpdateFaq" parameterType="int" resultType="faq">
+SELECT * FROM FAQ
+WHERE FID = #{fid}
+</select>
+
+<update id="updateFaq" parameterType="faq">
+UPDATE FAQ
+SET FTITLE = #{ftitle}, FCONTENT = #{fcontent}, ANSWERTYPE = #{answertype}
+WHERE FID = #{fid}
+</update>
+</mapper>

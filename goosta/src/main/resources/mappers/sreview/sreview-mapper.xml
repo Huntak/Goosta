@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="sreviewMapper">
+   
+   <!-- 게시물 총갯수 -->
+   <select id="sreviewCount" resultType="Integer">
+   		SELECT COUNT(*)
+		FROM (
+		      SELECT BOARDTYPENO
+		      FROM BOARD
+		      JOIN SHOPPINGREVIEW
+		      USING (BOARDNO)
+		      WHERE BOARDTYPENO = '1'
+		      <if test="search_option != 'all'">
+		      	AND ${search_option} LIKE '%' || #{search} || '%'
+		      </if>
+		      <if test="search_option == 'all'">
+		      	AND (BOARDTITLE LIKE '%' || #{search} || '%' 
+		      		OR BOARDWRITER LIKE '%' || #{search} || '%')
+		      </if>
+     	 )
+   </select>
+   
+   <!-- 해당 상품의 게시물 갯수 -->
+   <select id="sreviewProductCount" resultType="Integer">
+   		SELECT COUNT(*)
+		FROM (
+		      SELECT BOARDTYPENO
+		      FROM BOARD
+		      JOIN SHOPPINGREVIEW
+		      USING (BOARDNO)
+		      WHERE BOARDTYPENO = '1'
+		      AND PRODUCTID IN (SELECT PRODUCTID FROM PRODUCT WHERE PRODUCTNAME LIKE #{productnameShort}||'%')
+     	 )
+   </select>
+      
+   <!-- 신고게시판 전체목록  -->
+   <select id="selectList" resultType="sreview">
+		SELECT BOARDNO,BOARDTYPENO,BOARDTITLE,BOARDCONTENT,BOARDWRITER,BOARDDATE,READCOUNT,STARQUANTITY,REVIEWSIZE,REVIEWFOOT,REVIEWCOLOR,REVIEWDELIVER,PRODUCTID,RN,REPLYCOUNT
+		FROM (
+    			SELECT A.*, ROWNUM AS RN
+    			FROM(
+    					SELECT b.BOARDNO,BOARDTYPENO,BOARDTITLE,BOARDCONTENT,BOARDWRITER,BOARDDATE,READCOUNT,STARQUANTITY,REVIEWSIZE,REVIEWFOOT,REVIEWCOLOR,REVIEWDELIVER,PRODUCTID
+    					,(SELECT COUNT(*) FROM REPLY WHERE BOARDNO = b.BOARDNO) REPLYCOUNT
+         			 	FROM BOARD b
+         			 	LEFT JOIN SHOPPINGREVIEW s 
+         			 	ON(s.BOARDNO = b.BOARDNO)
+          		 	 	WHERE BOARDTYPENO = '1'
+          		 	 	AND BOARDSTATUS = 'Y'
+          		 	 	<if test="search_option != 'all'">
+					      	AND ${search_option} LIKE '%' || #{search} || '%'
+				      	</if>
+				      	<if test="search_option == 'all'">
+				      		AND (BOARDTITLE LIKE '%' || #{search} || '%' 
+				      		OR BOARDWRITER LIKE '%' || #{search} || '%')
+				     	</if>
+         	 		 	ORDER BY BOARDNO DESC
+          		)A
+      	)
+		WHERE RN BETWEEN #{start} AND #{end}
+   </select>
+   
+   <!-- 신고게시판 등록 -->
+   <insert id="insertSReview" parameterType="sreview">
+   		insert into BOARD (BOARDNO,BOARDTITLE,BOARDCONTENT,BOARDWRITER,BOARDTYPENO,READCOUNT,BOARDDATE,BOARDSTATUS)
+   		values (NVL((SELECT MAX(BOARDNO)+1 FROM BOARD WHERE BOARDTYPENO = '1'),1)
+   				,#{boardtitle}
+   				,#{boardcontent}
+   				,#{boardwriter}
+   				,1
+   				,0
+   				,sysdate
+   				,'Y'
+   				)
+   </insert>
+   
+    <!-- 신고게시판 등록 -->
+   <insert id="insertSReview2" parameterType="sreview">
+   		insert into SHOPPINGREVIEW (BOARDNO,STARQUANTITY,REVIEWSIZE,REVIEWFOOT,REVIEWCOLOR,REVIEWDELIVER,PRODUCTID)
+   		values ((SELECT MAX(BOARDNO) FROM BOARD WHERE BOARDTYPENO = '1')
+   				,#{starquantity}
+	   			,#{reviewsize}
+	   			,#{reviewfoot}
+	   			,#{reviewcolor}
+	   			,#{reviewdeliver}
+   				,#{productid}
+   				)
+   </insert>
+   
+    <!-- 신고게시판 상세화면 -->
+   <select id="selectOne" parameterType="Integer" resultType="sreview">
+		SELECT	b.BOARDNO,b.BOARDTITLE,b.BOARDWRITER,b.BOARDCONTENT,s.STARQUANTITY,s.REVIEWSIZE,s.REVIEWFOOT,s.REVIEWCOLOR,s.REVIEWDELIVER,s.PRODUCTID
+		FROM BOARD b, SHOPPINGREVIEW s
+		WHERE b.BOARDNO = #{boardno}
+		AND s.BOARDNO = #{boardno}
+   </select>
+   
+    <!-- 신고게시판 조회수 증가 -->
+   <update id="countUp" parameterType="Integer">
+   		UPDATE BOARD
+   		SET	READCOUNT = READCOUNT + 1
+   		WHERE BOARDNO = #{boardno}
+   </update>
+   
+	<!--    ${변수} => 따옴표가 제거됨
+   #{변수} => 따옴표가 들어감 -->   
+   
+   <!-- 수정1  -->
+   <update id="sreviewModify" parameterType="sreview">
+   		UPDATE BOARD
+   		SET BOARDTITLE = #{boardtitle}
+   		,BOARDCONTENT = #{boardcontent}
+   		WHERE BOARDNO = #{boardno}
+   </update>
+   
+   <!-- 수정 2 -->
+   <update id="sreviewModify2" parameterType="sreview">
+   		UPDATE SHOPPINGREVIEW
+   		SET STARQUANTITY = #{starquantity},
+   			REVIEWSIZE = #{reviewsize},
+   			REVIEWFOOT = #{reviewfoot},
+   			REVIEWCOLOR = #{reviewcolor},
+   			REVIEWDELIVER = #{reviewdeliver}
+   		WHERE BOARDNO = #{boardno}
+   </update>
+   
+   <!-- 삭제 -->
+   <update id="sreviewDelete" parameterType="Integer">
+   		UPDATE BOARD
+   		SET BOARDSTATUS = 'N'
+   		WHERE BOARDNO = #{boardno}
+   </update>
+   
+	<select id="selectStarQuantityRate" parameterType="String" resultType="String">
+		<![CDATA[
+			select avg(starquantity) 
+			from shoppingreview 
+	     		where productid in (select productid 
+	     							from product 
+	     							where productname like #{productname}||'%')
+		]]>
+	</select>
+	<select id="selectReviewSizeRate" parameterType="String" resultType="String">
+		<![CDATA[
+			select avg(reviewsize) 
+			from shoppingreview 
+	     		where productid in (select productid 
+	     							from product 
+	     							where productname like #{productname}||'%')
+		]]>
+	</select>
+	<select id="selectReviewFootRate" parameterType="String" resultType="String">
+		<![CDATA[
+			select avg(reviewfoot) 
+			from shoppingreview 
+	     		where productid in (select productid 
+	     							from product 
+	     							where productname like #{productname}||'%')
+		]]>
+	</select>
+	<select id="selectReviewColorRate" parameterType="String" resultType="String">
+		<![CDATA[
+			select avg(reviewcolor) 
+			from shoppingreview 
+	     		where productid in (select productid 
+	     							from product 
+	     							where productname like #{productname}||'%')
+		]]>
+	</select>
+	<select id="selectReviewDeliverRate" parameterType="String" resultType="String">
+		<![CDATA[
+			select avg(reviewdeliver) 
+			from shoppingreview 
+	     		where productid in (select productid 
+	     							from product 
+	     							where productname like #{productname}||'%')
+		]]>
+	</select>
+	<!-- 신고게시판 전체목록  -->
+   <select id="selectmyreviewList" resultType="sreview">
+		SELECT BOARDNO,BOARDTYPENO,BOARDTITLE,BOARDCONTENT,BOARDWRITER,BOARDDATE,READCOUNT,STARQUANTITY,REVIEWSIZE,REVIEWFOOT,REVIEWCOLOR,REVIEWDELIVER,PRODUCTID,RN,REPLYCOUNT
+		FROM (
+    			SELECT A.*, ROWNUM AS RN
+    			FROM(
+    					SELECT b.BOARDNO,BOARDTYPENO,BOARDTITLE,BOARDCONTENT,BOARDWRITER,BOARDDATE,READCOUNT,STARQUANTITY,REVIEWSIZE,REVIEWFOOT,REVIEWCOLOR,REVIEWDELIVER,PRODUCTID
+    					,(SELECT COUNT(*) FROM REPLY WHERE BOARDNO = b.BOARDNO) REPLYCOUNT
+         			 	FROM BOARD b
+         			 	LEFT JOIN SHOPPINGREVIEW s 
+         			 	ON(s.BOARDNO = b.BOARDNO)
+          		 	 	WHERE BOARDTYPENO = '1'
+          		 	 	AND BOARDSTATUS = 'Y'
+          		 	 	AND BOARDWRITER = #{search}
+         	 		 	ORDER BY BOARDNO DESC
+          		)A
+      	)
+		WHERE RN BETWEEN #{start} AND #{end}
+   </select>
+   
+</mapper>

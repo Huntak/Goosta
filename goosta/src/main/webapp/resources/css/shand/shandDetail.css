@@ -1,0 +1,163 @@
+@CHARSET "UTF-8";
+/* -------------------------
+		ShandDetail CSS 
+----------------------------*/
+ div.reportboard h3{
+      border-bottom: 3px solid #666;
+       color: #000;
+       padding: 13px 0;
+       margin-bottom: 10px;
+       font: bold 14px 'Nanum Gothic',Nanum Gothic,'Dotum',dotum;
+ }
+.cont758 {
+ width : 1100px;
+height : auto;
+margin : auto;
+}
+table{
+margin : auto;
+width : 79%;
+border-collapse : collapse;
+}
+td{
+/* border-bottom : 1px solid lightgray; */
+height : 50px;
+}
+.td_title{
+width : 15%;
+background : #f6f6f6;
+text-align : center;
+color : gray;
+}
+#title_td{
+width : 70%;
+border-bottom : 1px dashed gray;
+
+}
+#date_td{
+width : 20%;
+text-align : right;
+border-bottom : 1px dashed gray;
+color : gray;
+}
+#count_td{
+ width : 10%;
+ text-align : center;
+ color : gray;
+ 
+}
+.content{
+border : 1px solid lightgray;
+}
+
+.content div{
+border : none;
+margin : 10px;
+resize : none;
+width : auto;
+height : auto;
+}
+.button{
+width : 100px;
+height : 30px;
+background : gray;
+border-radius : 3px;
+border : 2px solid gray;
+color : white;
+margin : 10px;
+}
+
+#enroll{
+border : 1px solid lightgray;
+width : 100%;
+height : 86px;
+background : white;
+}
+.btn-ctm.btn-blue{
+   margin-top: 15px;
+   width: 130px;
+   height: 38px;
+   border: none;
+   color: white;
+   float: left;
+   margin-left: 20px;
+}
+.btn-ctm.btn-blue{background: #027dbf;}
+
+.btn-ctm.btn-blue.delete{
+   margin-left: 117px;
+}
+
+#enroll{
+border : 1px solid lightgray;
+width : 100%;
+height : 86px;
+background : #027dbf;
+color: white;
+}
+#enroll_td{
+width : 10%;
+}
+#comment_table{
+margin-top : 85px;
+border : 0;
+margin-bottom: 20px;
+border-top : dashed 1px gray;
+}
+#comment_table td{
+border-bottom : solid 1px lightgray;
+color : gray;
+}
+#textarea{
+border : 0;
+}
+input{
+border : 0;
+}
+.btn-area a{
+ color : white;
+ text-align : center;
+ line-height: 36px;
+}
+.btn-area a:hover{
+text-decoration : none;
+cursor : pointer;
+}
+#comment_content{
+  resize: none;
+  width: 700px;
+  height: 85px;
+}
+.commenttd{
+text-align : center;
+width:100px;
+}
+.boardimage{
+width : 600px;
+height : 500px;
+}
+#golist{
+ text-align: right;
+ width: 89%;
+ margin-bottom : 5px;
+ font-size : 14px;
+ font-weight : bold;
+}
+#golist a{
+cursor : pointer;
+}
+#golist a:hover{
+text-decoration : none;
+}
+#comments a{
+	cursor : pointer;
+}
+#date_div{
+margin:0; 
+margin-right:10px;
+font-weight : bold;
+}
+#count_div{
+margin : 0;
+font-weight : bold;
+}

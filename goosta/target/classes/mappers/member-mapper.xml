@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="member">
+   
+      
+   <select id="selectMember" parameterType="member" resultType="member">
+      <![CDATA[
+         SELECT
+            *
+         FROM
+            MEMBER
+         WHERE
+            USERID = #{userid}   AND USERPWD = #{userpwd}   
+      ]]>
+   </select>
+   
+    <insert id="insertmember" parameterType="member">
+   		insert into member values(#{memberid}, #{memberpwd}, #{membername}, #{memberbirth1}, #{memberbirth2}, #{memberbirth3}, #{memberemail}, #{memberphone1}, #{memberphone2}, #{memberphone3}, #{memberaddress1}, #{memberaddress2}, #{memberaddress3}, #{memberaddress4}, 'NORMAL', 0, 0, #{membergender}, sysdate, #{membersize}, 0, 'y')
+   		
+   </insert> 
+   
+   <select id="idcheck" resultType="int" parameterType="String">
+   	select count(*) from member where memberid = #{memberid}
+   </select>
+   
+   <select id="login" resultType="member" parameterType="member">
+   		select * from member where memberid = #{memberid} and memberpwd = #{memberpwd} and memberstatus = 'y'
+   </select>
+   
+   <select id="findid" resultType="member" parameterType="member">
+   		select memberid from member where membername= #{membername} and memberemail = #{memberemail}
+   </select>
+   
+   <select id="emailcheck" resultType="int" parameterType="String">
+   		select count(*) from member where memberemail = #{email}
+   </select>
+   
+    <select id="findidcheck" resultType="int" parameterType="member">
+   		select count(*) from member where memberemail = #{memberemail} and membername = #{membername}
+   </select>
+   
+   <select id="findpwdcheck" resultType="int" parameterType="member">
+   		select count(*) from member where memberemail = #{memberemail} and membername = #{membername} and memberid = #{memberid}
+   </select>
+   
+   <update id="updateauthNum" parameterType="Map" >
+   		update member set memberpwd = #{authNum} where memberid = #{memberid}
+   </update>
+   
+ 
+   <select id="selectm" parameterType="member" resultType="member">
+   	select * from member where memberid = #{memberid}
+   </select>
+  
+   
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="shoppingcart">
+
+
+	<insert id = "insertscv" parameterType="cart" >
+	  insert into shoppingcart values(nvl((select max(cartid)from shoppingcart), 0) + 1, #{memberid } ,#{productid} , #{cartquantity})
+	</insert>
+	<select id = "selectscv" parameterType="member" resultType="cart">
+	select * from shoppingcart where memberid = #{memberid} and cartid > 0
+	order by cartid
+	</select>
+	
+	<select id="selectproduct" parameterType="cart" resultType="product">
+		select * from product where productid = #{productid}
+	</select>
+	
+	<select id="selectpimage" parameterType="product" resultType="String">
+		select productimagemain from pimage where productimageid = #{productimageid}
+	</select>
+	
+	<delete id="cartdel" parameterType="cart">
+		delete from shoppingcart where cartid = #{cartid,jdbcType=INTEGER}
+	</delete>
+
+</mapper>
+

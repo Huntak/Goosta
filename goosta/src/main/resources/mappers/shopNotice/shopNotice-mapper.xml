@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="shopNotice">
+<!-- 공지사항 전체 조회  -->
+<select id="selectShopNoticeAll" parameterType="HashMap" resultType="shopNotice">
+SELECT * FROM 
+(SELECT BOARDNO, BOARDTYPENO, BOARDTITLE, BOARDCONTENT, BOARDWRITER, BOARDDATE, READCOUNT, BOARDSTATUS, BOARDIMAGE1, ROWNUM R
+	FROM
+	 (SELECT * FROM BOARD 
+	 LEFT JOIN BOARDIMAGE USING (BOARDIMAGEID) 
+	 WHERE BOARDTYPENO = 8 ORDER BY BOARDNO DESC)
+	)
+WHERE R BETWEEN #{startRow} AND #{endRow}
+</select>
+
+<!--공지사항 8개만 조회  -->
+<select id="selectShopNoticeAll2" resultType="shopNotice">
+SELECT BOARDNO, BOARDTYPENO, BOARDTITLE, BOARDCONTENT, BOARDWRITER, BOARDDATE, READCOUNT, BOARDSTATUS, BOARDIMAGE1
+FROM BOARD
+LEFT JOIN BOARDIMAGE USING (BOARDIMAGEID)
+WHERE BOARDTYPENO = 8
+ORDER BY BOARDNO DESC
+</select>
+
+<!--검색한 게시물 조회  -->
+<select id="shopNoticeListSearch" parameterType="HashMap" resultType="shopNotice">
+SELECT * FROM 
+(SELECT BOARDNO, BOARDTYPENO, BOARDTITLE, BOARDCONTENT, BOARDWRITER, BOARDDATE, READCOUNT, BOARDSTATUS, BOARDIMAGE1, ROWNUM R
+	FROM
+	 (SELECT * FROM BOARD 
+	 LEFT JOIN BOARDIMAGE USING (BOARDIMAGEID)
+	 WHERE BOARDTYPENO = 8 AND BOARDTITLE LIKE '%'||#{keyword}||'%' ORDER BY BOARDNO)
+	)
+WHERE R BETWEEN #{startRow} AND #{endRow}
+</select>
+
+<!-- 전체 게시물수 조회  -->
+<select id="shopNoticeCount" resultType="int">
+SELECT COUNT(*) FROM BOARD
+WHERE BOARDTYPENO = 8 
+</select>
+
+<!-- 검색한 게시물수 조회  -->
+<select id="shopNoticeCountSearch" resultType="int">
+SELECT COUNT(*) FROM BOARD
+WHERE BOARDTYPENO = 8 AND BOARDTITLE LIKE '%'||#{keyword}||'%'	 
+</select>
+
+<!--글 상세보기  -->
+<select id="shopNoticeDetail" parameterType="int" resultType="shopNotice">
+SELECT * FROM 
+BOARD
+LEFT JOIN BOARDIMAGE USING (BOARDIMAGEID)
+WHERE BOARDNO = #{boardno}
+</select>
+
+<!-- 조회수 처리  -->
+<update id="shopNoticeReadCount" parameterType="int">
+UPDATE BOARD 
+SET READCOUNT = (SELECT READCOUNT FROM BOARD  WHERE BOARDTYPENO = 8 AND BOARDNO = #{boardno})+1
+WHERE BOARDTYPENO = 8 AND BOARDNO = #{boardno}
+</update>
+
+<!--이미지 테이블 등록  -->
+<insert id="insertShopNoticeImage" parameterType="String">
+INSERT INTO BOARDIMAGE (BOARDIMAGEID, BOARDIMAGE1)
+VALUES(
+(SELECT DISTINCT NVL((SELECT MAX(BOARDIMAGEID)+1 FROM BOARDIMAGE), 1) FROM BOARDIMAGE),
+#{boardimage1}
+)
+</insert>
+
+<!-- 공지사항 글 등록 (첨부파일O)  -->
+<insert id="insertShopNotice" parameterType="shopNotice">
+INSERT INTO BOARD (boardno, boardtypeno, boardtitle, boardcontent, boardwriter, boarddate, readcount, boardstatus, boardimageid)
+VALUES(
+(SELECT DISTINCT NVL((SELECT MAX(BOARDNO)+1 FROM BOARD),1) FROM BOARD),
+8,
+#{boardtitle},
+#{boardcontent},
+#{boardwriter},
+sysdate,
+0,
+'N',
+(SELECT DISTINCT NVL((SELECT MAX(BOARDIMAGEID) FROM BOARDIMAGE), 1) FROM BOARDIMAGE)
+)
+</insert>
+
+<!-- 공지사항 글 등록 (첨부파일X)  -->
+<insert id="insertShopNotice2" parameterType="shopNotice">
+INSERT INTO BOARD (boardno, boardtypeno, boardtitle, boardcontent, boardwriter, boarddate, readcount, boardstatus)
+VALUES(
+(SELECT DISTINCT NVL((SELECT MAX(BOARDNO)+1 FROM BOARD),1) FROM BOARD),
+8,
+#{boardtitle},
+#{boardcontent},
+#{boardwriter},
+sysdate,
+0,
+'N'
+)
+</insert>
+
+<!--공지사항 글 수정 -->
+<update id="shopNoticeUpdate" parameterType="shopNotice">
+UPDATE BOARD
+SET BOARDTITLE = #{boardtitle}, BOARDCONTENT = #{boardcontent}
+WHERE BOARDNO = #{boardno} AND BOARDTYPENO = 8
+</update>
+
+</mapper>
+

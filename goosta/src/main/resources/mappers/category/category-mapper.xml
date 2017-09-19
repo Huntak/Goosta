@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="category">
+      
+	<!-- 카테고리 목록 -->
+	<select id="selectList" resultType="product">
+		SELECT PRODUCTID,PRODUCTNAME,CATEGORYID,PRODUCTIMAGEID,PRODUCTPRICE,PRODUCTIMAGEMAIN,CATEGORYBRAND,CATEGORYSORT,PRODUCTDATE 
+ 		FROM ( 
+        		SELECT A.*, ROWNUM AS RN
+        		FROM(
+		              SELECT P.PRODUCTID,P.PRODUCTNAME,P.CATEGORYID,P.PRODUCTIMAGEID,P.PRODUCTPRICE,M.PRODUCTIMAGEMAIN,C.CATEGORYBRAND,C.CATEGORYSORT,P.PRODUCTDATE
+		              FROM PRODUCT P, CATEGORIES C, PIMAGE M
+		              WHERE P.CATEGORYID = C.CATEGORYID
+		              AND P.PRODUCTIMAGEID = M.PRODUCTIMAGEID
+		              AND C.CATEGORYBRAND = #{categorybrand}
+		              <if test="categorysort == 'all'"></if>
+		              <if test="categorysort != 'all'">
+		              	AND CATEGORYSORT LIKE '%' || #{categorysort} || '%'
+		              </if>
+		              <if test="order == 'all'">
+		              	ORDER BY PRODUCTID DESC
+		              </if>
+		              <if test="order == 'asc'">
+		              	ORDER BY ${orderColumn} ASC
+		              </if>
+		              <if test="order == 'desc'">
+		              	ORDER BY ${orderColumn} DESC
+		              </if>
+		            )A
+ 				)
+ 		WHERE RN BETWEEN #{start} AND #{end}
+	</select>
+	
+	<!-- 베스트순 -->
+	<select id="bestSelect" resultType="product">
+		SELECT PRODUCTID,PRODUCTNAME,CATEGORYID,PRODUCTIMAGEID,PRODUCTPRICE,PRODUCTIMAGEMAIN,CATEGORYBRAND,CATEGORYSORT ,COUNT
+       FROM ( 
+              SELECT A.*, ROWNUM AS RN
+              FROM( 
+                      SELECT  PRODUCTID,PRODUCTNAME,CATEGORYID,PRODUCTIMAGEID,PRODUCTPRICE,PRODUCTIMAGEMAIN,CATEGORYBRAND,CATEGORYSORT, COUNT 
+                      FROM 
+                           ( 
+                            SELECT P.PRODUCTID,P.PRODUCTNAME,P.CATEGORYID,P.PRODUCTIMAGEID,P.PRODUCTPRICE,M.PRODUCTIMAGEMAIN,C.CATEGORYBRAND,C.CATEGORYSORT  
+                            FROM PRODUCT P, CATEGORIES C, PIMAGE M
+                            WHERE P.CATEGORYID = C.CATEGORYID
+                            AND P.PRODUCTIMAGEID = M.PRODUCTIMAGEID 
+                            AND C.CATEGORYBRAND = #{categorybrand})
+                      LEFT JOIN  ( SELECT PRODUCTID, COUNT(*) COUNT  FROM ORDERLIST  group BY PRODUCTID)
+                      USING (PRODUCTID) 
+                      ORDER BY COUNT DESC NULLS LAST
+                    )A
+                )
+    WHERE RN BETWEEN #{start} AND #{end}     
+	</select>
+	
+	<!-- 카테고리 총갯수 -->
+	<select id="categoryCount" resultType="Integer">
+		SELECT COUNT(*)
+				FROM (
+				      SELECT P.PRODUCTID,P.PRODUCTNAME,P.CATEGORYID,P.PRODUCTIMAGEID,P.PRODUCTPRICE,M.PRODUCTIMAGEMAIN,C.CATEGORYBRAND,C.CATEGORYSORT
+		          FROM PRODUCT P, CATEGORIES C, PIMAGE M
+		          WHERE P.CATEGORYID = C.CATEGORYID
+		          AND P.PRODUCTIMAGEID = M.PRODUCTIMAGEID
+		          AND C.CATEGORYBRAND = #{categorybrand}
+		          <if test="categorysort == 'all'"></if>
+		          <if test="categorysort != 'all'">
+		          	AND CATEGORYSORT LIKE '%' || #{categorysort} || '%'
+		          </if>
+		          )
+	</select>
+</mapper>

@@ -1,0 +1,167 @@
+@CHARSET "UTF-8";
+
+#pagingTable{
+margin : auto;
+}
+.container-fluid {
+	width: 1200px;
+	height: 850px;
+	margin: auto;
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+#row-fluid {
+	width: 100%;
+}
+#menu {
+	width: 100%;
+	height: 200px;
+	border: 1px solid lightgray;
+	margin-bottom: 50px;
+	z-index: 0;
+	background: lightgray;
+	position: relative;
+	background-image : url("../../images/ysw/title.png");
+	background-size: 100% 120%;
+    border-radius: 0px 15px 0px 15px;
+}
+#menu_ul {
+	position: relative;
+	z-index: 1;
+	width: 59%;
+	height: 46px;
+	margin: auto;
+	margin-top: 174px;
+	border : 1px solid lightgray;
+	display: block;
+	background-color: white;
+}
+#menu_ul a{
+    display: inline-block;
+    width: 100%;
+    text-decoration: none;
+    color: gray;
+    font-weight: bold;
+    cursor: pointer;
+    height: 43px;
+ }
+#menu_ul li {
+	/* float: left;
+	list-style: none;
+	text-align: center;
+	display: block;
+	width: 234px;
+	line-height: 50px;
+	font-weight : bold;
+	font-size: 11pt;
+	height: 47px;
+	color : gray;
+	cursor : pointer;
+	 */
+	    float: left;
+    list-style: none;
+    text-align: center;
+    display: block;
+    width: 227px;
+    line-height: 50px;
+    font-weight: bold;
+    font-size: 10pt;
+    height: 47px;
+    color: gray;
+    cursor: pointer;
+}
+#center_li{
+border-left : 1px solid #f6f6f6;
+border-right : 1px solid #f6f6f6;
+}
+.menu_label{
+width : 100%; margin-top:13px
+}
+#notice_table{
+width : 80%;
+margin : auto;
+border-bottom : 1px solid lightgray;
+text-align : center;
+margin-bottom : 20px;
+margin-top: 30px;
+}
+#notice_table td{
+border-top : 1px solid lightgray;
+height : 35px;
+color : gray;
+}
+#search_div{
+margin : auto;
+width : 30%;
+margin-top : 30px;
+display : block;
+}
+#search_input{
+    padding: 0;
+    height: 25px;
+    margin: 0;
+    width: 300;
+    border-radius : 0px;
+}
+#search_button{
+	padding: 0;
+    height: 25px;
+    margin: 0;
+    width : 50px;
+    background : white;
+    color : gray;
+}
+form{
+margin-left : 40px;
+}
+#title{
+width: 66px;
+margin-bottom : 30px;
+margin: auto;
+color : gray;
+font-weight : bold;
+font-size : 11pt;
+}
+#paging{
+margin : auto;
+margin-top : 30px;
+color : gray;
+font-size : 12pt;
+width : 105px;
+}
+a {
+text-decoration: none;
+color: gray;
+cursor : pointer;
+}
+#notice_table_tr{
+font-weight : bold;
+color : gray;
+height : 30px;
+background : #f6f6f6;
+}
+a:hover{
+text-decoration : none;
+}
+table a{
+color : gray;
+cursor : pointer;
+}
+table a:hover{
+color : darkgray;
+}
+#write_div{
+	position : relative;
+	width : 90%;
+}
+#writeBtn{
+	position : absolute;
+	right : 0;
+	display: inline-block;
+    border: 1px solid lightgray;
+    width: 65px;
+    height: 27px;
+    line-height: 28px;
+    text-align: center;
+    font-size: 13px;
+}
